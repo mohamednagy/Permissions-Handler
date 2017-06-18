@@ -1,0 +1,17 @@
+{
+    "name": "nagy/permissions-handler",
+    "authors": [
+        {
+            "name": "mohamed nagy",
+            "email": "mohamed.n.haleem@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "type": "library",
+    "autoload": {
+        "psr-4": { "PermissionsHandler\\": "src/" }
+    },
+    "minimum-stability": "stable",
+    "require": {},
+    "version": "1.0"
+}

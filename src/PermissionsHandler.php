@@ -9,6 +9,7 @@ namespace PermissionsHandler;
 use PermissionsHandler\CanDo;
 use PermissionsHandler\Models\Role;
 use PermissionsHandler\Models\Permission;
+use Doctrine\Common\Annotations\FileCacheReader;
 use Doctrine\Common\Annotations\AnnotationReader;
 use PermissionsHandler\PermissionsHandlerInterface;
 
@@ -21,7 +22,11 @@ class PermissionsHandler implements PermissionsHandlerInterface
     public function __construct($user)
     {
         $this->user = $user;
-        $this->annotationReader = new AnnotationReader();
+        $this->annotationReader = new FileCacheReader(
+            new AnnotationReader(),
+            storage_path('PermissionsHandler/Cache'),
+            (strpos(strtolower(env('APP_ENV')), 'prod') === false)
+        );
     }
 
     /**
@@ -33,11 +38,11 @@ class PermissionsHandler implements PermissionsHandlerInterface
     */
     function hasPermissions($permissions = [])
     {
-        if(!is_array($permissions)){
+        if (!is_array($permissions)) {
             $permissions = [$permissions];
         }
-        $hasPermission = $this->user->whereHas('roles', function($roles) use ($permissions){
-            $roles->whereHas('permissions', function($query) use ($permissions){
+        $hasPermission = $this->user->whereHas('roles', function ($roles) use ($permissions) {
+            $roles->whereHas('permissions', function ($query) use ($permissions) {
                 $query->whereIn('name', $permissions);
             });
         })->count();
@@ -52,13 +57,13 @@ class PermissionsHandler implements PermissionsHandlerInterface
     public function can()
     {
         $request = app("Illuminate\Http\Request");
-        if($this->isExcludedRoute($request)){
+        if ($this->isExcludedRoute($request)) {
             return true;
         }
         $permissions = $this->getPermissionsFromAnnotations($request);
-        if(config('permissionsHandler.aggressiveMode') == true && empty($permissions)){
+        if (config('permissionsHandler.aggressiveMode') == true && empty($permissions)) {
             return false;
-        }elseif(config('permissionsHandler.aggressiveMode') == false && empty($permissions)){
+        } elseif (config('permissionsHandler.aggressiveMode') == false && empty($permissions)) {
             return true;
         }
         return $this->hasPermissions($permissions);
@@ -70,7 +75,8 @@ class PermissionsHandler implements PermissionsHandlerInterface
      * @param Illuminate\Http\Request $request
      * @return boolean
      */
-    public function isExcludedRoute($request){
+    public function isExcludedRoute($request)
+    {
         $excludedRoutes = config('permissionsHandler.excludedRoutes');
         return in_array($request->path(), $excludedRoutes);
     }
@@ -81,7 +87,8 @@ class PermissionsHandler implements PermissionsHandlerInterface
      * @param Illuminate\Http\Request $request
      * @return void
      */
-    public function getPermissionsFromAnnotations($request){
+    public function getPermissionsFromAnnotations($request)
+    {
         $permFromAnnot = [];
         $actionName = $request->route()->getActionName();
         if (strpos($actionName, '@') !== false) {
@@ -90,11 +97,10 @@ class PermissionsHandler implements PermissionsHandlerInterface
             $method = $action[1];
             $reflectionMethod = new \ReflectionMethod($class, $method);
             $permissions = $this->annotationReader->getMethodAnnotations($reflectionMethod);
-            if(isset($permissions[0]) && $permissions[0]->permissions){
+            if (isset($permissions[0]) && $permissions[0]->permissions) {
                 $permFromAnnot = $permissions[0]->permissions['value'];
             }
         }
         return $permFromAnnot;
-
     }
 }

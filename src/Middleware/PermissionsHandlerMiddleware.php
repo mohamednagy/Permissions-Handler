@@ -9,14 +9,6 @@ use Illuminate\Support\Facades\Auth;
 class PermissionsHandlerMiddleware
 {
 
-    protected $permissionsHandler;
-
-
-    function __construct(PermissionsHandler $permissionsHandler)
-    {
-        $this->permissionsHandler = $permissionsHandler;
-    }
-
     /**
      * Handle an incoming request.
      *
@@ -26,7 +18,7 @@ class PermissionsHandlerMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if(!$this->permissionsHandler->can()){
+        if(!PermissionsHandler::can()){
             $redirectTo = config('permissionsHandler.redirectUrl');
             if($redirectTo){
                 return redirect($redirectTo);

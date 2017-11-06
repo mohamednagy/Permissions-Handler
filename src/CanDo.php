@@ -2,6 +2,8 @@
 
 namespace PermissionsHandler;
 
+use PermissionsHandler;
+
 trait CanDo {
 
 
@@ -10,8 +12,8 @@ trait CanDo {
     }
 
 
-    public function canDo(){
-        
+    public function canDo($permissions){
+        return PermissionsHandler::hasPermissions($permissions);
     }
 
 

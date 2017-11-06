@@ -29,10 +29,10 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(PermissionsHandlerInterface::class, function () {
+        $this->app->singleton('permissionsHandler', function () {
             $model = config('permissionsHandler.user');
-            $repository = new PermissionsHandler(new $model);
-            return $repository;
+            $permissionsHandler = new PermissionsHandler(new $model);
+            return $permissionsHandler;
         });
         // register annotation
         AnnotationRegistry::registerFile(__DIR__.'/Permissions.php');

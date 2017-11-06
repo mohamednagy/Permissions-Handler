@@ -1,75 +1,99 @@
-##### Package is under development
-
 # Permissions Handler
-
-Permissions-handler is an easy-to-use third party package for laravel 5.0+ to manage users roles and permissions  using **annotations**.
+Permissions-handler is an easy-to-use third party package for laravel 5  to manage users roles and permissions  using [annotaions](https://github.com/doctrine/annotations).
 
 
 ### Installation
 
 add the package to your composer.json 
     
-    "nagy/permissions-handler":"dev-master"
+    "nagy/permissions-handler":"1.0"
     
  in your config/app.php add
 
-    'PermissionsHandler\PermissionsHandlerServiceProvider',
-    'PermissionsHandler' => 'PermissionsHandler\PermissionsHandlerInterface'
+    'providers' => [
+        ...
+        PermissionsHandler\PermissionsHandlerServiceProvider::class
+    ],
+
+    'aliases'   => [
+        ...
+        'PermissionsHandler' => PermissionsHandler\Facades\PermissionsHandlerFacade::class,
+    ]
+
+
     
 Publish the package configrations
 
-    php artisan vendor:publish
-    
-This will generate *tables migrations*, *App/Http/Middlware/PermissionsHandlerMiddleware*, *Models* and *config/permissionsConfig.php*.
+    php artisan vendor:publish --provider=PermissionsHandler\PermissionsHandlerServiceProvider
+
+This will generate *tables migrations* and *config/permissoinsHandler.php*.
 
 Run the new migrations
 
     php artisan migrate
 
-In the **config/permissionsConfig.php**  set the path to your *User* model
-	
-	user => 'App\User'
+    
+Include `CanDo` trait into your User model
+
+    use PermissionsHandler\CanDo;
+
+    class User extends Model
+    {
+        use CanDo;
+    
+
+### Config
+    /**
+    * A model which PermissionsHandler handle
+    */
+    'user' => \App\User::class
+
+
+    /**
+    * redirect url in case of the user doesn't authorized to do action
+    */
+    'redirectUrl' => null,
+
+
+    /**
+    * Aggressive Mode define the attitude of PermissionsHandler for handling permissions
+    * True: means that the the method SHOULD has permissions written in its DocBlock and the user should has at least on of those permissions to allow acccess to this method
+    * False: if there are no permissions for this method then its considered as a public and PermissionsHandler will allow access
+    */
+    'aggressiveMode' => false,
+
+
+    /**
+    * exlude routes paths from PermissionsHandler hands
+    */
+    'excludedRoutes' => [
+        'login', 'register'
+    ]
 
 ### Usage
-Suppose that you have Blog system which **admins** can add **posts** and **visitors** can **comment** on this posts. So, you have tow main gropus:
-    
-   * Admins
-   * Visitors
+ * Register PermissionsHandlerMiddleware to be able to handle permissions for controller methods
+    `PermissionsHandler\Middleware/PermissionsHandlerMiddleware::class`
 
-and you have two main sections:
-    
-   * Posts
-   * Comments
+PermissionsHandler uses annotaions ([doctrine/annotations](https://github.com/doctrine/annotations)) written in controller methods to read permissoins then check whether the user has permissions or not 
 
-So the roles will be as the following:
- - Admins can:
-    - add, edit and delete Posts
-    - edit and delete comments
-- Visitors can:
-    - add, edit and delete comments
-
-#### Database seeding
-* Divide your system to section for example *posts* is a section and *comments* is a section.
-* Create the permissions needed for each section for example *posts* needs permissions like *add*, *edit* and *delete*.
-* Assign the permissions created to the section thats created for it.
-* Create your groups for example *admins*.
-* Now you have permissions and groups, assign the permissions to groups.
-* Assign the users to groups.
-
-#### With routes
+#### With controller methods
 	/**
-	* @permissions ["posts.add"]
+	* @PermissoinsHandler\Permissoins({"add-users"})
 	*/
 	function store(Request $request){
-	 // you code here
+	 // your code here
 	}
-**permissions-handler** uses a combination form  *section name* and *permission* to specify the permissions for a this route. So that's mean,Only  the logged user whose has group that has the permission **add** in section **posts** can access this function.
 
+or within your code
+
+    Auth::user()->canDo('add-users');
 #### With Views
+you can use `@canDo` Blade directive to check if the user has a permissions within your blade as the following:
 
-	<button permissions="posts.add">Edit</Button>
-	
-**permissions-handler** will filter the views against *permissions* before it send to the client, If the user does not has the permission then the element will be removed.
-
-
-##### Great Thanks to Ahmed Sorour.
+    @canDo(['edit-suer'])
+        can edit use
+    @elsecanDo(['delete-user'])
+        can delete user
+    @else
+        user has no permissions
+    @endcanDo

@@ -33,6 +33,9 @@ class PermissionsHandler implements PermissionsHandlerInterface
     */
     function hasPermissions($permissions = [])
     {
+        if(!is_array($permissions)){
+            $permissions = [$permissions];
+        }
         $hasPermission = $this->user->whereHas('roles', function($roles) use ($permissions){
             $roles->whereHas('permissions', function($query) use ($permissions){
                 $query->whereIn('name', $permissions);

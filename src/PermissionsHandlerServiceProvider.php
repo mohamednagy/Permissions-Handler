@@ -2,6 +2,7 @@
 
 namespace PermissionsHandler;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use PermissionsHandler\PermissionsHandler;
 use PermissionsHandler\PermissionsHandlerInterface;
@@ -16,6 +17,10 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // register blade directive
+        Blade::if('canDo', function ($permissions) {
+            return \PermissionsHandler::hasPermissions($permissions);
+        });
         $this->publishes([
             __DIR__.'/Migrations' => base_path('database/migrations/'),
             __DIR__.'/Config' => base_path('config'),

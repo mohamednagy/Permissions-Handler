@@ -20,8 +20,8 @@ class CreateUserPermissionsMigrations extends Migration {
 			});
 		}
 
-		if (!Schema::hasTable('user_role')) {
-			Schema::create('user_role', function(Blueprint $table) {
+		if (!Schema::hasTable('role_user')) {
+			Schema::create('role_user', function(Blueprint $table) {
 				$table -> increments('id');
 				$table -> integer('role_id') -> unsigned() -> index();
 				$table -> foreign('role_id') -> references('id') -> on('roles') -> onDelete('cascade');
@@ -41,8 +41,8 @@ class CreateUserPermissionsMigrations extends Migration {
 			});
 		}
 
-    if (!Schema::hasTable('role_permission')) {
-			Schema::create('role_permission', function(Blueprint $table) {
+    if (!Schema::hasTable('permission_role')) {
+			Schema::create('permission_role', function(Blueprint $table) {
 				$table -> increments('id');
 				$table -> integer('permission_id') -> unsigned() -> index();
 				$table -> foreign('permission_id') -> references('id') -> on('permissions') -> onDelete('cascade');
@@ -61,11 +61,11 @@ class CreateUserPermissionsMigrations extends Migration {
 	 * @return void
 	 */
 	public function down() {
-		if (Schema::hasTable('user_role')) {
-			Schema::drop('user_role');
+		if (Schema::hasTable('role_user')) {
+			Schema::drop('role_user');
 		}
-		if (Schema::hasTable('role_permission')) {
-			Schema::drop('role_permission');
+		if (Schema::hasTable('permission_role')) {
+			Schema::drop('permission_role');
 		}
 		if (Schema::hasTable('roles')) {
 			Schema::drop('roles');

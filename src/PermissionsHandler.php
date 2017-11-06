@@ -4,131 +4,94 @@ namespace PermissionsHandler;
 
 /*
  * @Auther: Mohamed Nagy
- * @version : 2.0
+ * @version : 1.0
  */
-use PermissionsHandler\PermissionsHandlerInterface;
-
-use PermissionsHandler\DocBlockReader\Reader;
-use PermissionsHandler\HtmlDomParser\Htmldom;
-
+use PermissionsHandler\CanDo;
 use PermissionsHandler\Models\Role;
 use PermissionsHandler\Models\Permission;
+use Doctrine\Common\Annotations\AnnotationReader;
+use PermissionsHandler\PermissionsHandlerInterface;
 
 class PermissionsHandler implements PermissionsHandlerInterface
 {
-    private $message;
 
     private $user;
+    private $annotationReader;
 
-    public function __construct()
+    public function __construct($user)
     {
-      $this->user = config('permissionsHandler.user');
+        $this->user = $user;
+        $this->annotationReader = new AnnotationReader();
     }
 
-
     /**
-    * set message
+    * check if a user has permissions
     *
-    * @param $message  string
-    */
-    function setMessage($msg){
-      $this->message = $msg;
-    }
-
-
-    /**
-    * get message
-    *
-    * @return string
-    */
-    function getMessage(){
-      return $this->message;
-    }
-
-
-    /**
-     * set the user model
-     */
-    public function setUser($user){
-      $this->user = $user;
-      $this->_getPermissions();
-    }
-
-
-
-    /**
-    * check if a user has specfic permissions
-    *
-    * @param $permissions  array
-    *        $user         App\Models\User
+    * @param array $permissions
     *
     * @return bool
     */
-    function hasPermissions($permissions = []){
-      if(!is_array($permissions)){
-        $permissions = [$permissions];
-      }
-      $roles = $this->user->roles;
-      foreach ($roles as $role) {
-        $permissions = $role->permissions()->whereIn('name', $permissions)->get();
-        if(!$permissions->isEmpty()){
-          return true;
-        }
-      }
-      return false;
-    }
-
-
-    /**
-     * parse response against permissions to slice elements that the user doesnot have permissions.
-     *
-     * @param $str  Response
-     * @param $user User model
-     *
-     * @return Response
-     */
-    public function parseView($str, $user = null)
+    function hasPermissions($permissions = [])
     {
-        if (!$user) {
-            $user = \Auth::user();
-        }
-        $this->user = $user;
-        $html = new Htmldom($str);
-        $elems = $html->find('*[permissions]');
-        foreach ($elems as $elem) {
-            $permissions = $elem->attr['permissions'];
-            if (!$this->hasPermissions([$permissions])) {
-                $elem->outertext = '';
-            }
-        }
-
-        return $html->save();
+        $hasPermission = $this->user->whereHas('roles', function($roles) use ($permissions){
+            $roles->whereHas('permissions', function($query) use ($permissions){
+                $query->whereIn('name', $permissions);
+            });
+        })->count();
+        return $hasPermission > 0;
     }
 
     /**
      * check if a user has permission to access specific route.
-     *
-     * @param string $methodName used as ReflectionMethod instance
-     * @param Model  $user
      *
      * @return bool
      */
     public function can()
     {
         $request = app("Illuminate\Http\Request");
+        if($this->isExcludedRoute($request)){
+            return true;
+        }
+        $permissions = $this->getPermissionsFromAnnotations($request);
+        if(config('permissionsHandler.aggressiveMode') == true && empty($permissions)){
+            return false;
+        }elseif(config('permissionsHandler.aggressiveMode') == false && empty($permissions)){
+            return true;
+        }
+        return $this->hasPermissions($permissions);
+    }
+    
+    /**
+     * check if the current route is excluded from permissions rules
+     *
+     * @param Illuminate\Http\Request $request
+     * @return boolean
+     */
+    public function isExcludedRoute($request){
+        $excludedRoutes = config('permissionsHandler.excludedRoutes');
+        return in_array($request->path(), $excludedRoutes);
+    }
+
+    /**
+     * get the assigned permissins from the method annotaions
+     *
+     * @param Illuminate\Http\Request $request
+     * @return void
+     */
+    public function getPermissionsFromAnnotations($request){
+        $permFromAnnot = [];
         $actionName = $request->route()->getActionName();
         if (strpos($actionName, '@') !== false) {
-            $array = explode('@', $actionName);
-            $class = $array[0];
-            $method = $array[1];
-            $reader = new Reader($class, $method);
-
-            // if permissions assiged
-            $permissions = $reader->getParameter('permissions');
-            if (is_array($permissions) && $permissions) {
-                return $this->hasPermissions($permissions);
+            $action = explode('@', $actionName);
+            $class = $action[0];
+            $method = $action[1];
+            $reflectionMethod = new \ReflectionMethod($class, $method);
+            $permissions = $this->annotationReader->getMethodAnnotations($reflectionMethod);
+            if(isset($permissions[0]) && $permissions[0]->permissions){
+                $permFromAnnot = $permissions[0]->permissions['value'];
             }
         }
-        return true;
+        return $permFromAnnot;
+
     }
 }

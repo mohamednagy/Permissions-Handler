@@ -9,7 +9,7 @@ class Permission extends Model {
 	protected $guarded = [];
 
 
-	function role(){
-		return $this->belongsToMany(\PermissionsHandler\Models\Role::class, 'role_permission');
+	function roles(){
+		return $this->belongsToMany(\PermissionsHandler\Models\Role::class);
 	}
 }

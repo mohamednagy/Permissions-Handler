@@ -12,6 +12,8 @@
         "psr-4": { "PermissionsHandler\\": "src/" }
     },
     "minimum-stability": "stable",
-    "require": {},
+    "require": {
+        "doctrine/annotations" : "1.4.*"
+    },
     "version": "1.0"
 }

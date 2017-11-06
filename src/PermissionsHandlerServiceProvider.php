@@ -3,6 +3,9 @@
 namespace PermissionsHandler;
 
 use Illuminate\Support\ServiceProvider;
+use PermissionsHandler\PermissionsHandler;
+use PermissionsHandler\PermissionsHandlerInterface;
+use Doctrine\Common\Annotations\AnnotationRegistry; 
 
 class PermissionsHandlerServiceProvider extends ServiceProvider
 {
@@ -26,9 +29,12 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(
-            'PermissionsHandler\PermissionsHandlerInterface',
-            'PermissionsHandler\PermissionsHandler'
-        );
+        $this->app->singleton(PermissionsHandlerInterface::class, function () {
+            $model = config('permissionsHandler.user');
+            $repository = new PermissionsHandler(new $model);
+            return $repository;
+        });
+        // register annotation
+        AnnotationRegistry::registerFile(__DIR__.'/Permissions.php');
     }
 }

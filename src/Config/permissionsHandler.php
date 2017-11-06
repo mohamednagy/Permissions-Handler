@@ -9,7 +9,11 @@ return [
 
   'redirectUrl' => 'login',
 
-  'aggressiveMode' => false
+  'aggressiveMode' => false,
+
+  'excludedRoutes' => [
+    'login', 'register'
+  ]
 
 
 ];

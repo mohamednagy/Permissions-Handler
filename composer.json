@@ -7,13 +7,20 @@
         }
     ],
     "license": "MIT",
-    "type": "library",
     "autoload": {
         "psr-4": { "PermissionsHandler\\": "src/" }
     },
-    "minimum-stability": "stable",
     "require": {
         "doctrine/annotations" : "1.4.*"
     },
-    "version": "1.0"
+    "extra": {
+        "laravel": {
+            "providers": [
+                "PermissionsHandler\\PermissionsHandlerServiceProvider"
+            ],
+            "aliases": {
+                "PermissionsHandler" : "PermissionsHandler\\Facades\\PermissionsHandlerFacade"
+            }
+        }
+    }
 }

@@ -43,8 +43,11 @@ trait PermissionsHandlerUserTrait {
      * @return boolean
      */
     public function hasRole($role){
-        $roleId = Role::whereName($role)->first()->id;
-        return in_array($roleId, PermissionsHandler::getUserRoles());
+        $role = Role::whereName($role)->first();
+        if(!$role){
+            return false;
+        }
+        return in_array($role->id, PermissionsHandler::getUserRoles());
     }
 
 

@@ -17,10 +17,8 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // register blade directive
-        Blade::if('canDo', function ($permissions) {
-            return \PermissionsHandler::hasPermissions($permissions);
-        });
+        require_once(__DIR__.'/Blade/Directives.php');
+        
         $this->publishes([
             __DIR__.'/Migrations' => base_path('database/migrations/'),
             __DIR__.'/Config' => base_path('config'),

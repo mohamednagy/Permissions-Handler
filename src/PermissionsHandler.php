@@ -9,6 +9,7 @@ namespace PermissionsHandler;
 use PermissionsHandler\CanDo;
 use Illuminate\Support\Facades\DB;
 use PermissionsHandler\Models\Role;
+use Illuminate\Support\Facades\Cache;
 use PermissionsHandler\Models\Permission;
 use Doctrine\Common\Annotations\FileCacheReader;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -41,10 +42,14 @@ class PermissionsHandler
         if (!is_array($permissions)) {
             $permissions = [$permissions];
         }
-        $roles = $this->user->roles->pluck('id')->toArray();
-        $allPermissions = Permission::whereHas('roles', function ($query) use ($roles) {
-            return $query->whereIn(DB::raw('roles.id'), $roles);
-        })->pluck('name')->toArray();
+        $roles = Cache::remember('user_'.$this->user->id.'_roles', 60 ,function() {
+            return  $this->user->roles->pluck('id')->toArray();
+        });
+        $allPermissions = Cache::remember('user_'.$this->user->id.'_permissions', 60, function() use ($roles) {
+            return Permission::whereHas('roles', function ($query) use ($roles) {
+                    return $query->whereIn(DB::raw('roles.id'), $roles);
+                })->pluck('name')->toArray();
+        });
         $hasPermission = array_intersect($allPermissions, $permissions);
         if ($this->isAggresive() == true) {
             return count($hasPermission) == count($permissions);

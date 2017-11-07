@@ -45,14 +45,22 @@ class PermissionsHandler
         if (!is_array($permissions)) {
             $permissions = [$permissions];
         }
-        $roles = Cache::remember('user_'.$this->user->id.'_roles', 60 ,function() {
-            return  $this->user->roles->pluck('id')->toArray();
-        });
-        $allPermissions = Cache::remember('user_'.$this->user->id.'_permissions', 60, function() use ($roles) {
-            return Permission::whereHas('roles', function ($query) use ($roles) {
-                    return $query->whereIn(DB::raw('roles.id'), $roles);
-                })->pluck('name')->toArray();
-        });
+        $roles = Cache::remember(
+            'user_'.$this->user->id.'_roles',
+            $this->config['cacheExpiration'] ,
+            function() {
+                    return  $this->user->roles->pluck('id')->toArray();
+                }
+            );
+        $allPermissions = Cache::remember(
+            'user_'.$this->user->id.'_permissions',
+            $this->config['cacheExpiration'],
+            function() use ($roles) {
+                return Permission::whereHas('roles', function ($query) use ($roles) {
+                            return $query->whereIn(DB::raw('roles.id'), $roles);
+                       })->pluck('name')->toArray();
+                }
+            );
         $hasPermission = array_intersect($allPermissions, $permissions);
         if ($this->config['aggressiveMode'] == true) {
             return count($hasPermission) == count($permissions);

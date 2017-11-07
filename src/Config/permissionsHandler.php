@@ -24,7 +24,12 @@ return [
    */
   'excludedRoutes' => [
     'login', 'register'
-  ]
+  ],
+
+  /**
+   * Database cache expiration time in minutes
+   */
+  'cacheExpiration' => 60,
 
 
 ];

@@ -94,3 +94,4 @@ you can use `@canDo` Blade directive to check if the user has a permissions with
     @else
         user has no permissions
     @endcanDo
+    

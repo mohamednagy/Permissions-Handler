@@ -4,9 +4,9 @@ Permissions-handler is an easy-to-use third party package for laravel 5  to mana
 
 ### Installation
 
-add the package to your composer.json 
+require the package 
     
-    "nagy/permissions-handler":"1.0"
+    $ composer require nagy/permissions-handler
     
  in your config/app.php add
 
@@ -20,7 +20,7 @@ add the package to your composer.json
         'PermissionsHandler' => PermissionsHandler\Facades\PermissionsHandlerFacade::class,
     ]
 
-
+> You don't need this step in laravel5.5 `package:discover`  will do the job :)
     
 Publish the package configrations
 
@@ -43,11 +43,6 @@ Include `CanDo` trait into your User model
     
 
 ### Config
-    /**
-    * A model which PermissionsHandler handle
-    */
-    'user' => \App\User::class
-
 
     /**
     * redirect url in case of the user doesn't authorized to do action
@@ -55,11 +50,13 @@ Include `CanDo` trait into your User model
     'redirectUrl' => null,
 
 
-    /**
+    **
     * Aggressive Mode define the attitude of PermissionsHandler for handling permissions
-    * True: means that the the method SHOULD has permissions written in its DocBlock and the user should has at least on of those permissions to allow acccess to this method
-    * False: if there are no permissions for this method then its considered as a public and PermissionsHandler will allow access
-    */
+    * True:    1- Method SHOULD has permissions assiged to allow access, if no, then this method considered as a private and no direct access is allowed
+    *          2- User SHOULD has all the permissions assiged to this method to allow access
+    * False:   1- If there are no permissions for this method then its considered as a public and PermissionsHandler will allow access
+    *          2- If the user has one of the assigned permissions to the method then allow access
+   */
     'aggressiveMode' => false,
 
 

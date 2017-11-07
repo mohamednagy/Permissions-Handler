@@ -22,5 +22,7 @@
                 "PermissionsHandler" : "PermissionsHandler\\Facades\\PermissionsHandlerFacade"
             }
         }
-    }
+    },
+    "minimum-stability" : "dev",
+    "prefer-stable" : true
 }

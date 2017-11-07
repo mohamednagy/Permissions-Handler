@@ -7,13 +7,13 @@ namespace PermissionsHandler;
  * @version : 1.0
  */
 use PermissionsHandler\CanDo;
+use Illuminate\Support\Facades\DB;
 use PermissionsHandler\Models\Role;
 use PermissionsHandler\Models\Permission;
 use Doctrine\Common\Annotations\FileCacheReader;
 use Doctrine\Common\Annotations\AnnotationReader;
-use PermissionsHandler\PermissionsHandlerInterface;
 
-class PermissionsHandler implements PermissionsHandlerInterface
+class PermissionsHandler
 {
 
     private $user;
@@ -41,12 +41,15 @@ class PermissionsHandler implements PermissionsHandlerInterface
         if (!is_array($permissions)) {
             $permissions = [$permissions];
         }
-        $hasPermission = $this->user->whereHas('roles', function ($roles) use ($permissions) {
-            $roles->whereHas('permissions', function ($query) use ($permissions) {
-                $query->whereIn('name', $permissions);
-            });
-        })->count();
-        return $hasPermission > 0;
+        $roles = $this->user->roles->pluck('id')->toArray();
+        $allPermissions = Permission::whereHas('roles', function ($query) use ($roles) {
+            return $query->whereIn(DB::raw('roles.id'), $roles);
+        })->pluck('name')->toArray();
+        $hasPermission = array_intersect($allPermissions, $permissions);
+        if ($this->isAggresive() == true) {
+            return count($hasPermission) == count($permissions);
+        }
+        return count($hasPermission) > 0;
     }
 
     /**
@@ -61,9 +64,9 @@ class PermissionsHandler implements PermissionsHandlerInterface
             return true;
         }
         $permissions = $this->getPermissionsFromAnnotations($request);
-        if (config('permissionsHandler.aggressiveMode') == true && empty($permissions)) {
+        if ($this->isAggresive() == true && empty($permissions)) {
             return false;
-        } elseif (config('permissionsHandler.aggressiveMode') == false && empty($permissions)) {
+        } elseif ($this->isAggresive() == false && empty($permissions)) {
             return true;
         }
         return $this->hasPermissions($permissions);
@@ -102,5 +105,15 @@ class PermissionsHandler implements PermissionsHandlerInterface
             }
         }
         return $permFromAnnot;
+    }
+
+    /**
+     * get the aggresive mode value from the config file
+     *
+     * @return boolean
+     */
+    private function isAggresive()
+    {
+        return config('permissionsHandler.aggressiveMode');
     }
 }

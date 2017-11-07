@@ -35,8 +35,7 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('permissionsHandler', function () {
-            $model = config('permissionsHandler.user');
-            $permissionsHandler = new PermissionsHandler(new $model);
+            $permissionsHandler = new PermissionsHandler(auth()->user());
             return $permissionsHandler;
         });
         // register annotation

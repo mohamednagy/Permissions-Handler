@@ -19,6 +19,7 @@ class PermissionsHandler
 
     private $user;
     private $annotationReader;
+    private $config = array();
 
     public function __construct($user)
     {
@@ -28,6 +29,8 @@ class PermissionsHandler
             storage_path('PermissionsHandler/Cache'),
             (strpos(strtolower(env('APP_ENV')), 'prod') === false)
         );
+
+        $this->config = config('permissionsHandler');
     }
 
     /**
@@ -51,7 +54,7 @@ class PermissionsHandler
                 })->pluck('name')->toArray();
         });
         $hasPermission = array_intersect($allPermissions, $permissions);
-        if ($this->isAggresive() == true) {
+        if ($this->config['aggressiveMode'] == true) {
             return count($hasPermission) == count($permissions);
         }
         return count($hasPermission) > 0;
@@ -69,9 +72,9 @@ class PermissionsHandler
             return true;
         }
         $permissions = $this->getPermissionsFromAnnotations($request);
-        if ($this->isAggresive() == true && empty($permissions)) {
+        if ($this->config['aggressiveMode'] == true && empty($permissions)) {
             return false;
-        } elseif ($this->isAggresive() == false && empty($permissions)) {
+        } elseif ($this->config['aggressiveMode'] == false && empty($permissions)) {
             return true;
         }
         return $this->hasPermissions($permissions);
@@ -85,8 +88,7 @@ class PermissionsHandler
      */
     public function isExcludedRoute($request)
     {
-        $excludedRoutes = config('permissionsHandler.excludedRoutes');
-        return in_array($request->path(), $excludedRoutes);
+        return in_array($request->path(), $this->config['excludedRoutes']);
     }
 
     /**
@@ -110,15 +112,5 @@ class PermissionsHandler
             }
         }
         return $permFromAnnot;
-    }
-
-    /**
-     * get the aggresive mode value from the config file
-     *
-     * @return boolean
-     */
-    private function isAggresive()
-    {
-        return config('permissionsHandler.aggressiveMode');
     }
 }

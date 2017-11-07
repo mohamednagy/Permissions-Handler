@@ -65,7 +65,12 @@ Include `CanDo` trait into your User model
     */
     'excludedRoutes' => [
         'login', 'register'
-    ]
+    ],
+
+    /**
+    * Database cache expiration time in minutes
+    */
+    'cacheExpiration' => 60,
 
 ### Usage
  * Register PermissionsHandlerMiddleware to be able to handle permissions for controller methods

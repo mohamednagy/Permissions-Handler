@@ -6,16 +6,13 @@ namespace PermissionsHandler;
  * @Auther: Mohamed Nagy
  * @version : 1.0
  */
-use PermissionsHandler\CanDo;
-use Illuminate\Support\Facades\DB;
-use PermissionsHandler\Models\Role;
-use Illuminate\Support\Facades\Cache;
-use PermissionsHandler\Models\Permission;
+use PermissionsHandler\Traits\PermissionsHandlerCacheTrait;
 use Doctrine\Common\Annotations\FileCacheReader;
 use Doctrine\Common\Annotations\AnnotationReader;
 
 class PermissionsHandler
 {
+    use PermissionsHandlerCacheTrait;
 
     private $user;
     private $annotationReader;
@@ -45,22 +42,8 @@ class PermissionsHandler
         if (!is_array($permissions)) {
             $permissions = [$permissions];
         }
-        $roles = Cache::remember(
-            'user_'.$this->user->id.'_roles',
-            $this->config['cacheExpiration'] ,
-            function() {
-                    return  $this->user->roles->pluck('id')->toArray();
-                }
-            );
-        $allPermissions = Cache::remember(
-            'user_'.$this->user->id.'_permissions',
-            $this->config['cacheExpiration'],
-            function() use ($roles) {
-                return Permission::whereHas('roles', function ($query) use ($roles) {
-                            return $query->whereIn(DB::raw('roles.id'), $roles);
-                       })->pluck('name')->toArray();
-                }
-            );
+        $roles = $this->getUserRoles();
+        $allPermissions = $this->getRolePermissions($roles);
         $hasPermission = array_intersect($allPermissions, $permissions);
         if ($this->config['aggressiveMode'] == true) {
             return count($hasPermission) == count($permissions);
@@ -73,7 +56,7 @@ class PermissionsHandler
      *
      * @return bool
      */
-    public function can()
+    public function canGo()
     {
         $request = app("Illuminate\Http\Request");
         if ($this->isExcludedRoute($request)) {

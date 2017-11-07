@@ -18,7 +18,7 @@ class PermissionsHandlerMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if(!PermissionsHandler::can()){
+        if(!PermissionsHandler::canGo()){
             $redirectTo = config('permissionsHandler.redirectUrl');
             if($redirectTo){
                 return redirect($redirectTo);

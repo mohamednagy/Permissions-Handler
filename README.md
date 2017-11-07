@@ -1,5 +1,5 @@
 # Permissions Handler
-Permissions-handler is an easy-to-use third party package for laravel 5  to manage users roles and permissions  using [annotaions](https://github.com/doctrine/annotations).
+Permissions-handler is an easy-to-use third party package for laravel 5  to manage users roles and permissions  using [annotations](https://github.com/doctrine/annotations).
 
 
 ### Installation
@@ -22,11 +22,11 @@ require the package
 
 > You don't need this step in laravel5.5 `package:discover`  will do the job :)
     
-Publish the package configrations
+Publish the package configurations
 
     php artisan vendor:publish --provider=PermissionsHandler\PermissionsHandlerServiceProvider
 
-This will generate *tables migrations* and *config/permissoinsHandler.php*.
+This will generate *tables migrations* and *config/permissionsHandler.php*.
 
 Run the new migrations
 
@@ -71,7 +71,7 @@ Include `CanDo` trait into your User model
  * Register PermissionsHandlerMiddleware to be able to handle permissions for controller methods
     `PermissionsHandler\Middleware/PermissionsHandlerMiddleware::class`
 
-PermissionsHandler uses annotaions ([doctrine/annotations](https://github.com/doctrine/annotations)) written in controller methods to read permissoins then check whether the user has permissions or not 
+PermissionsHandler uses annotations ([doctrine/annotations](https://github.com/doctrine/annotations)) written in controller methods to read permissions then check whether the user has permissions or not 
 
 #### With controller methods
 	/**
@@ -94,3 +94,4 @@ you can use `@canDo` Blade directive to check if the user has a permissions with
     @else
         user has no permissions
     @endcanDo
+    

@@ -33,13 +33,13 @@ Run the new migrations
     php artisan migrate
 
     
-Include `CanDo` trait into your User model
+Include `PermissionsHandlerUserTrait` trait into your User model
 
-    use PermissionsHandler\CanDo;
+    use PermissionsHandler\Traits\PermissionsHandlerUserTrait;
 
     class User extends Model
     {
-        use CanDo;
+        use PermissionsHandlerUserTrait;
     
 
 ### Config
@@ -56,7 +56,7 @@ Include `CanDo` trait into your User model
     *          2- User SHOULD has all the permissions assiged to this method to allow access
     * False:   1- If there are no permissions for this method then its considered as a public and PermissionsHandler will allow access
     *          2- If the user has one of the assigned permissions to the method then allow access
-   */
+    */
     'aggressiveMode' => false,
 
 
@@ -89,14 +89,20 @@ PermissionsHandler uses annotations ([doctrine/annotations](https://github.com/d
 or within your code
 
     Auth::user()->canDo('add-users');
+    Auth::user()->hasPermissions(['add-users', 'delete-users']);
+    Auth::user()->hasRole('admin');
 #### With Views
 you can use `@canDo` Blade directive to check if the user has a permissions within your blade as the following:
 
     @canDo(['edit-suer'])
         can edit use
-    @elsecanDo(['delete-user'])
-        can delete user
-    @else
-        user has no permissions
     @endcanDo
+
+    @hasPermissions(['delete-users'])
+        can delete users
+    @endhasRole
+
+    @hasRole('admin')
+        is admin
+    @endhasRole
     

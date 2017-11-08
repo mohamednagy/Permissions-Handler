@@ -4,15 +4,16 @@ namespace PermissionsHandler;
 
 /*
  * @Auther: Mohamed Nagy
- * @version : 1.0
  */
-use PermissionsHandler\Traits\PermissionsHandlerCacheTrait;
+use Illuminate\Database\Eloquent\Model;
 use Doctrine\Common\Annotations\FileCacheReader;
 use Doctrine\Common\Annotations\AnnotationReader;
+use PermissionsHandler\Traits\PermissionsHandlerTrait;
+use PermissionsHandler\Traits\PermissionsHandlerCacheTrait;
 
 class PermissionsHandler
 {
-    use PermissionsHandlerCacheTrait;
+    use PermissionsHandlerCacheTrait, PermissionsHandlerTrait;
 
     private $user;
     private $annotationReader;
@@ -103,5 +104,30 @@ class PermissionsHandler
             }
         }
         return $permFromAnnot;
+    }
+
+
+    /**
+     * clear all cached annotations
+     *
+     * @return void
+     */
+    public function clearAnnotationsCache()
+    {
+        $this->annotationReader->clearLoadedAnnotations();
+    }
+
+    /**
+     * get the user that the PermissionsHandler plays with
+     *
+     * @return Illuminate\Database\Eloquent\Model $user
+     */
+    public function getUser($id = null)
+    {
+        $user = new $this->config['user'];
+        if($id){
+            $user = $user->find($id);
+        }
+        return $user;
     }
 }

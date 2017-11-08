@@ -4,6 +4,10 @@
 
 
 return [
+  /**
+   * user model whitch permissionsHandler will work with
+   */
+  'user' => \App\User::class,
 
   /**
    * redirect url in case of the user doesn't authorized to do action

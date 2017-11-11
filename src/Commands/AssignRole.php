@@ -2,11 +2,9 @@
 
 namespace PermissionsHandler\Commands;
 
-use PermissionsHandler;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
+use PermissionsHandler;
 use PermissionsHandler\Models\Role;
-use PermissionsHandler\Models\Permission;
 
 class AssignRole extends Command
 {
@@ -23,7 +21,6 @@ class AssignRole extends Command
      * @var string
      */
     protected $description = 'Assign role to user --role=admin --use-id=2';
-
 
     /**
      * Create a new command instance.
@@ -44,8 +41,9 @@ class AssignRole extends Command
     {
         $userId = $this->option('user-id');
         $roleName = $this->option('role');
-        if(!$userId || !$roleName){
+        if (!$userId || !$roleName) {
             $this->error('both user-id and role are required');
+
             return;
         }
         $this->line("Assigning role `$roleName` to user `$userId`");
@@ -53,8 +51,5 @@ class AssignRole extends Command
         $role = PermissionsHandler::addRole($roleName);
         PermissionsHandler::assignRoleToUser($role, $user);
         $this->info('role has been assigned!');
-
     }
 }
-
-?>

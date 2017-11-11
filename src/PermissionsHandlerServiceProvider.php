@@ -2,10 +2,9 @@
 
 namespace PermissionsHandler;
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
-use PermissionsHandler\PermissionsHandler;
-use Doctrine\Common\Annotations\AnnotationRegistry; 
 
 class PermissionsHandlerServiceProvider extends ServiceProvider
 {
@@ -16,7 +15,7 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        require_once(__DIR__.'/Blade/Directives.php');
+        require_once __DIR__.'/Blade/Directives.php';
 
         // register console commands
         if ($this->app->runningInConsole()) {
@@ -25,10 +24,10 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
                 \PermissionsHandler\Commands\AssignRole::class,
             ]);
         }
-        
+
         $this->publishes([
             __DIR__.'/Migrations/migrations.php' => base_path('database/migrations/'.date('Y_m_d_His').'_create_permissions_migrations.php'),
-            __DIR__.'/Config' => base_path('config'),
+            __DIR__.'/Config'                    => base_path('config'),
         ]);
     }
 

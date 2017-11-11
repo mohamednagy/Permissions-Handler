@@ -2,28 +2,28 @@
 /**
  * @canDo
  * 
- * @param array|string $permissions
+ * @param string $permission
  */
-Blade::if('canDo', function ($permissions) {
+Blade::if('canDo', function ($permission) {
     $user = app('Illuminate\Http\Request')->user();
     if(!$user){
         return false;
     }
-    return $user->hasPermission($permissions);
+    return $user->hasPermission($permission);
 });
 
 
 /**
- * @hasPermissions
+ * @hasPermission
  * 
- * @param array|string $permissions
+ * @param string $permission
  */
-Blade::if('hasPermissions', function ($permissions) {
+Blade::if('hasPermission', function ($permission) {
     $user = app('Illuminate\Http\Request')->user();
     if(!$user){
         return false;
     }
-    return $user->hasPermission($permissions);
+    return $user->hasPermission($permission);
 });
 
 

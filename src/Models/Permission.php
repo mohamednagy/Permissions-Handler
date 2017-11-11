@@ -1,15 +1,17 @@
-<?php namespace PermissionsHandler\Models;
+<?php
+
+namespace PermissionsHandler\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Permission extends Model {
+class Permission extends Model
+{
+    protected $table = 'permissions';
 
-	protected $table = "permissions";
+    protected $guarded = [];
 
-	protected $guarded = [];
-
-
-	function roles(){
-		return $this->belongsToMany(\PermissionsHandler\Models\Role::class);
-	}
+    public function roles()
+    {
+        return $this->belongsToMany(\PermissionsHandler\Models\Role::class);
+    }
 }

@@ -1,20 +1,18 @@
 <?php
 
 
-
-
 return [
-  /**
+  /*
    * user model which permissionsHandler will play with
    */
   'user' => \App\User::class,
 
-  /**
+  /*
    * redirect url in case of the user doesn't authorized to do action
    */
   'redirectUrl' => null,
 
-  /**
+  /*
    * Aggressive Mode define the attitude of PermissionsHandler for handling permissions
    * True:    1- Method SHOULD has permissions assiged to allow access, if no, then this method considered as a private and no direct access is allowed
    *          2- User SHOULD has all the permissions assiged to this method to allow access
@@ -23,25 +21,16 @@ return [
    */
   'aggressiveMode' => true,
 
-  /**
+  /*
    * exlude routes paths from PermissionsHandler hands
    */
   'excludedRoutes' => [
-    'login', 'register'
+    'login', 'register',
   ],
 
-  /**
+  /*
    * Database cache expiration time in minutes
    */
   'cacheExpiration' => 60,
 
-
 ];
-
-
-
-
-
-
-
-?>

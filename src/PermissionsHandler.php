@@ -5,18 +5,17 @@ namespace PermissionsHandler;
 /*
  * @Auther: Mohamed Nagy
  */
-use PermissionsHandler\Traits\CrudTrait;
-use Doctrine\Common\Annotations\FileCacheReader;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\FileCacheReader;
+use PermissionsHandler\Traits\CrudTrait;
 
 class PermissionsHandler
 {
     use CrudTrait;
-    
-    protected $annotationReader;
-    protected $config = array();
 
-    
+    protected $annotationReader;
+    protected $config = [];
+
     public function __construct()
     {
         $this->annotationReader = new FileCacheReader(
@@ -44,20 +43,21 @@ class PermissionsHandler
         } elseif ($this->config['aggressiveMode'] == false && empty($annotations)) {
             return true;
         }
-        foreach($annotations as $annotation){
-            if(!$annotation->check($this->config['aggressiveMode'])){
+        foreach ($annotations as $annotation) {
+            if (!$annotation->check($this->config['aggressiveMode'])) {
                 return  false;
             }
         }
-        return true;
 
+        return true;
     }
-    
+
     /**
-     * check if the current route is excluded from permissions rules
+     * check if the current route is excluded from permissions rules.
      *
      * @param Illuminate\Http\Request $request
-     * @return boolean
+     *
+     * @return bool
      */
     public function isExcludedRoute($request)
     {
@@ -65,9 +65,10 @@ class PermissionsHandler
     }
 
     /**
-     * get the assigned annotations from the a route
+     * get the assigned annotations from the a route.
      *
      * @param Illuminate\Http\Request $request
+     *
      * @return array
      */
     public function getAnnotationsFromRequest($request)
@@ -81,12 +82,12 @@ class PermissionsHandler
             $reflectionMethod = new \ReflectionMethod($class, $method);
             $annotations = $this->annotationReader->getMethodAnnotations($reflectionMethod);
         }
+
         return $annotations;
     }
 
-
     /**
-     * clear all cached annotations
+     * clear all cached annotations.
      *
      * @return void
      */

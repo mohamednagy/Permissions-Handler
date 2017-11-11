@@ -1,4 +1,5 @@
 <?php
+
 namespace PermissionsHandler\Facades;
 
 use Illuminate\Support\Facades\Facade;

@@ -3,33 +3,37 @@
 namespace PermissionsHandler\Middleware;
 
 use Closure;
-use PermissionsHandler;
 use Illuminate\Contracts\Auth\Guard;
+use PermissionsHandler;
 
 class PermissionsHandlerMiddleware
 {
-
     protected $auth;
 
-    public function __construct(Guard $auth){
+    public function __construct(Guard $auth)
+    {
         $this->auth = $auth;
     }
+
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        if(!PermissionsHandler::canGo($request)){
+        if (!PermissionsHandler::canGo($request)) {
             $redirectTo = config('permissionsHandler.redirectUrl');
-            if($redirectTo){
+            if ($redirectTo) {
                 return redirect($redirectTo);
             }
+
             return abort(403);
         }
+
         return $next($request);
     }
 }

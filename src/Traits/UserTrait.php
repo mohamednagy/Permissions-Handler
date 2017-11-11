@@ -2,18 +2,16 @@
 
 namespace PermissionsHandler\Traits;
 
-use PermissionsHandler;
-use Illuminate\Support\Facades\DB;
-use PermissionsHandler\Models\Role;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use PermissionsHandler;
 use PermissionsHandler\Models\Permission;
+use PermissionsHandler\Models\Role;
 
 trait UserTrait
 {
-
-
     /**
-     * many to many relation with PermissionsHandler\Models\Role
+     * many to many relation with PermissionsHandler\Models\Role.
      */
     public function roles()
     {
@@ -21,7 +19,7 @@ trait UserTrait
     }
 
     /**
-     * Get user cached roles
+     * Get user cached roles.
      *
      * @return array
      */
@@ -37,13 +35,14 @@ trait UserTrait
     }
 
     /**
-     * Get user cached permissions
+     * Get user cached permissions.
      *
      * @return array
      */
     public function cachedPermissions()
     {
         $roles = $this->cachedRoles();
+
         return  Cache::remember(
             $this->getCachePrefix().'_permissions',
             config('permissionsHandler.cacheExpiration'),
@@ -58,10 +57,11 @@ trait UserTrait
     }
 
     /**
-     * Check if the user has a role
+     * Check if the user has a role.
      *
      * @param string $role
-     * @return boolean
+     *
+     * @return bool
      */
     public function hasRole($role)
     {
@@ -69,45 +69,51 @@ trait UserTrait
     }
 
     /**
-     * Check if the user has a permission
+     * Check if the user has a permission.
      *
      * @param string $permission
-     * @return boolean
+     *
+     * @return bool
      */
-    public function hasPermission($permission){
+    public function hasPermission($permission)
+    {
         return in_array($permission, $this->cachedPermissions());
     }
 
     /**
-     * Check if the user has a permission, is alias for hasPermission
+     * Check if the user has a permission, is alias for hasPermission.
      *
      * @param string $permission
-     * @return boolean
+     *
+     * @return bool
      */
-    public function canDo($permission){
+    public function canDo($permission)
+    {
         return in_array($permission, $this->cachedPermissions());
     }
 
     /**
-     * Clear user cached roles
+     * Clear user cached roles.
      *
      * @return void
      */
-    public function clearCachedRoles(){
+    public function clearCachedRoles()
+    {
         Cache::forget($this->getCachePrefix().'_roles');
     }
 
     /**
-     * Clear user cached permissions
+     * Clear user cached permissions.
      *
      * @return void
      */
-    public function clearCachedPermissions(){
+    public function clearCachedPermissions()
+    {
         Cache::forget($this->getCachePrefix().'_permissions');
     }
 
     /**
-     * Get the cache prefix, used for caching keys
+     * Get the cache prefix, used for caching keys.
      *
      * @return string
      */

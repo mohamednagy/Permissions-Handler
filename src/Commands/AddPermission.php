@@ -2,8 +2,8 @@
 
 namespace PermissionsHandler\Commands;
 
-use PermissionsHandler;
 use Illuminate\Console\Command;
+use PermissionsHandler;
 
 class AddPermission extends Command
 {
@@ -43,6 +43,7 @@ class AddPermission extends Command
 
         if (!$permissionName || !$roleName) {
             $this->error('both permission and role are required');
+
             return;
         }
 
@@ -50,7 +51,7 @@ class AddPermission extends Command
 
         $permission = PermissionsHandler::addPermission($permissionName);
         $role = PermissionsHandler::addRole($roleName);
-        
+
         PermissionsHandler::assignPermissionToRole($permission, $role);
 
         $this->info('All is done!');

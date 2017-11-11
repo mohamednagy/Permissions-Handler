@@ -5,9 +5,9 @@ namespace PermissionsHandler;
 use PermissionsHandler\Annotations\Checkable;
 
 /**
-* @Annotation
-* @Target("METHOD")
-*/
+ * @Annotation
+ * @Target("METHOD")
+ */
 class Roles implements Checkable
 {
     public $roles;
@@ -27,10 +27,11 @@ class Roles implements Checkable
             if ($isAggressive == true && $hasRole == false) {
                 return false;
             }
-            if($hasRole){
+            if ($hasRole) {
                 $result = true;
             }
         }
+
         return $result;
     }
 }

@@ -5,23 +5,20 @@ namespace PermissionsHandler;
 /*
  * @Auther: Mohamed Nagy
  */
-use Illuminate\Database\Eloquent\Model;
+use PermissionsHandler\Traits\CrudTrait;
 use Doctrine\Common\Annotations\FileCacheReader;
 use Doctrine\Common\Annotations\AnnotationReader;
-use PermissionsHandler\Traits\PermissionsHandlerTrait;
-use PermissionsHandler\Traits\PermissionsHandlerCacheTrait;
 
 class PermissionsHandler
 {
-    use PermissionsHandlerCacheTrait, PermissionsHandlerTrait;
+    use CrudTrait;
+    
+    protected $annotationReader;
+    protected $config = array();
 
-    private $user;
-    private $annotationReader;
-    private $config = array();
-
-    public function __construct($user)
+    
+    public function __construct()
     {
-        $this->user = $user;
         $this->annotationReader = new FileCacheReader(
             new AnnotationReader(),
             storage_path('PermissionsHandler/Cache'),
@@ -32,44 +29,28 @@ class PermissionsHandler
     }
 
     /**
-    * check if a user has permissions
-    *
-    * @param array $permissions
-    *
-    * @return bool
-    */
-    function hasPermissions($permissions = [])
-    {
-        if (!is_array($permissions)) {
-            $permissions = [$permissions];
-        }
-        $roles = $this->getUserRoles();
-        $allPermissions = $this->getRolePermissions($roles);
-        $hasPermission = array_intersect($allPermissions, $permissions);
-        if ($this->config['aggressiveMode'] == true) {
-            return count($hasPermission) == count($permissions);
-        }
-        return count($hasPermission) > 0;
-    }
-
-    /**
      * check if a user has permission to access specific route.
      *
      * @return bool
      */
-    public function canGo()
+    public function canGo($request)
     {
-        $request = app("Illuminate\Http\Request");
         if ($this->isExcludedRoute($request)) {
             return true;
         }
-        $permissions = $this->getPermissionsFromAnnotations($request);
-        if ($this->config['aggressiveMode'] == true && empty($permissions)) {
+        $annotations = $this->getAnnotationsFromRequest($request);
+        if ($this->config['aggressiveMode'] == true && empty($annotations)) {
             return false;
-        } elseif ($this->config['aggressiveMode'] == false && empty($permissions)) {
+        } elseif ($this->config['aggressiveMode'] == false && empty($annotations)) {
             return true;
         }
-        return $this->hasPermissions($permissions);
+        foreach($annotations as $annotation){
+            if(!$annotation->check($this->config['aggressiveMode'])){
+                return  false;
+            }
+        }
+        return true;
+
     }
     
     /**
@@ -84,26 +65,23 @@ class PermissionsHandler
     }
 
     /**
-     * get the assigned permissins from the method annotaions
+     * get the assigned annotations from the a route
      *
      * @param Illuminate\Http\Request $request
-     * @return void
+     * @return array
      */
-    public function getPermissionsFromAnnotations($request)
+    public function getAnnotationsFromRequest($request)
     {
-        $permFromAnnot = [];
+        $annotations = [];
         $actionName = $request->route()->getActionName();
         if (strpos($actionName, '@') !== false) {
             $action = explode('@', $actionName);
             $class = $action[0];
             $method = $action[1];
             $reflectionMethod = new \ReflectionMethod($class, $method);
-            $permissions = $this->annotationReader->getMethodAnnotations($reflectionMethod);
-            if (isset($permissions[0]) && $permissions[0]->permissions) {
-                $permFromAnnot = $permissions[0]->permissions['value'];
-            }
+            $annotations = $this->annotationReader->getMethodAnnotations($reflectionMethod);
         }
-        return $permFromAnnot;
+        return $annotations;
     }
 
 
@@ -115,19 +93,5 @@ class PermissionsHandler
     public function clearAnnotationsCache()
     {
         $this->annotationReader->clearLoadedAnnotations();
-    }
-
-    /**
-     * get the user that the PermissionsHandler plays with
-     *
-     * @return Illuminate\Database\Eloquent\Model $user
-     */
-    public function getUser($id = null)
-    {
-        $user = new $this->config['user'];
-        if($id){
-            $user = $user->find($id);
-        }
-        return $user;
     }
 }

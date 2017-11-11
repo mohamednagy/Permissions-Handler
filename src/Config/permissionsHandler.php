@@ -5,7 +5,7 @@
 
 return [
   /**
-   * user model whitch permissionsHandler will work with
+   * user model which permissionsHandler will play with
    */
   'user' => \App\User::class,
 

@@ -5,7 +5,11 @@
  * @param array|string $permissions
  */
 Blade::if('canDo', function ($permissions) {
-    return \PermissionsHandler::hasPermissions($permissions);
+    $user = app('Illuminate\Http\Request')->user();
+    if(!$user){
+        return false;
+    }
+    return $user->hasPermission($permissions);
 });
 
 
@@ -15,7 +19,11 @@ Blade::if('canDo', function ($permissions) {
  * @param array|string $permissions
  */
 Blade::if('hasPermissions', function ($permissions) {
-    return \PermissionsHandler::hasPermissions($permissions);
+    $user = app('Illuminate\Http\Request')->user();
+    if(!$user){
+        return false;
+    }
+    return $user->hasPermission($permissions);
 });
 
 
@@ -25,7 +33,11 @@ Blade::if('hasPermissions', function ($permissions) {
  * @param string $role
  */
 Blade::if('hasRole', function ($role) {
-    return auth()->user()->hasRole($role);
+    $user = app('Illuminate\Http\Request')->user();
+    if(!$user){
+        return false;
+    }
+    return $user->hasRole($role);
 });
 
 

@@ -4,11 +4,16 @@ namespace PermissionsHandler\Middleware;
 
 use Closure;
 use PermissionsHandler;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\Auth\Guard;
 
 class PermissionsHandlerMiddleware
 {
 
+    protected $auth;
+
+    public function __construct(Guard $auth){
+        $this->auth = $auth;
+    }
     /**
      * Handle an incoming request.
      *
@@ -18,7 +23,7 @@ class PermissionsHandlerMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if(!PermissionsHandler::canGo()){
+        if(!PermissionsHandler::canGo($request)){
             $redirectTo = config('permissionsHandler.redirectUrl');
             if($redirectTo){
                 return redirect($redirectTo);

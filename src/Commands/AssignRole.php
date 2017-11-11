@@ -43,15 +43,16 @@ class AssignRole extends Command
     public function handle()
     {
         $userId = $this->option('user-id');
-        $role = $this->option('role');
-        if(!$userId || !$role){
-            $this->error('user-id and role is required');
+        $roleName = $this->option('role');
+        if(!$userId || !$roleName){
+            $this->error('both user-id and role are required');
             return;
         }
-        $this->line("Assigning role `$role` to user `$userId`");
-        $user = PermissionsHandler::getUser($userId);
-        PermissionsHandler::assignUserToRole($user, $role);
-        $this->info('permission has been created!');
+        $this->line("Assigning role `$roleName` to user `$userId`");
+        $user = PermissionsHandler::user($userId);
+        $role = PermissionsHandler::addRole($roleName);
+        PermissionsHandler::assignRoleToUser($role, $user);
+        $this->info('role has been assigned!');
 
     }
 }

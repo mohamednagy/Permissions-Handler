@@ -4,9 +4,6 @@ namespace PermissionsHandler\Commands;
 
 use PermissionsHandler;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use PermissionsHandler\Models\Role;
-use PermissionsHandler\Models\Permission;
 
 class AddPermission extends Command
 {
@@ -15,7 +12,7 @@ class AddPermission extends Command
      *
      * @var string
      */
-    protected $signature = 'permissions:add-permission {--permission=} {--role=}';
+    protected $signature = 'permissions:add {--permission=} {--role=}';
 
     /**
      * The console command description.
@@ -23,7 +20,6 @@ class AddPermission extends Command
      * @var string
      */
     protected $description = 'Add a new permission to the system database';
-
 
     /**
      * Create a new command instance.
@@ -42,17 +38,21 @@ class AddPermission extends Command
      */
     public function handle()
     {
-        $permission = $this->option('permission');
-        $role = $this->option('role');
-        if(!$permission || !$role){
-            $this->error('permission and role is required');
+        $permissionName = $this->option('permission');
+        $roleName = $this->option('role');
+
+        if (!$permissionName || !$roleName) {
+            $this->error('both permission and role are required');
             return;
         }
-        $this->line("Creating permission `$permission` for role `$role`");
-        PermissionsHandler::assignPermissionToRole($permission, $role);
-        $this->info('permission has been created!');
 
+        $userModel = PermissionsHandler::user();
+
+        $permission = PermissionsHandler::addPermission($permissionName);
+        $role = PermissionsHandler::addRole($roleName);
+        
+        PermissionsHandler::assignPermissionToRole($permission, $role);
+
+        $this->info('All is done!');
     }
 }
-
-?>

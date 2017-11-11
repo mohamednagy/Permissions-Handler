@@ -27,7 +27,7 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
         }
         
         $this->publishes([
-            __DIR__.'/Migrations' => base_path('database/migrations/'),
+            __DIR__.'/Migrations/migrations.php' => base_path('database/migrations/'.date('Y_m_d_His').'_create_permissions_migrations.php'),
             __DIR__.'/Config' => base_path('config'),
         ]);
     }
@@ -39,11 +39,11 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('permissionsHandler', function () {
-            $permissionsHandler = new PermissionsHandler(auth()->user());
-            return $permissionsHandler;
+        $this->app->bind('permissionsHandler', function () {
+            return new PermissionsHandler();
         });
         // register annotation
-        AnnotationRegistry::registerFile(__DIR__.'/Permissions.php');
+        AnnotationRegistry::registerFile(__DIR__.'/Annotations/Permissions.php');
+        AnnotationRegistry::registerFile(__DIR__.'/Annotations/Roles.php');
     }
 }

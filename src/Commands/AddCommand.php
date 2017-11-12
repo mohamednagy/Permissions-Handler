@@ -49,11 +49,11 @@ class AddCommand extends Command
 
         $userModel = PermissionsHandler::user();
 
-        if($permissionName){
+        if ($permissionName) {
             $permission = PermissionsHandler::addPermission($permissionName);
             $this->info('Permission has been created!');
         }
-        if($roleName){
+        if ($roleName) {
             $role = PermissionsHandler::addRole($roleName);
             $this->info('Role has been created!');
         }

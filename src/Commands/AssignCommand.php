@@ -45,9 +45,10 @@ class AssignCommand extends Command
 
         if (!$userId && !$roleName && !$permissionName) {
             $this->error('missing parameters!');
+
             return;
         }
-        
+
         $permission = null;
         if ($permissionName) {
             $permission = PermissionsHandler::addPermission($permissionName);
@@ -62,7 +63,7 @@ class AssignCommand extends Command
         if ($userId) {
             $user = PermissionsHandler::user($userId);
         }
-        
+
         if ($role && $permission) {
             PermissionsHandler::assignPermissionToRole($permission, $role);
             $this->info("`$permissionName` has been assigned to `$roleName`");

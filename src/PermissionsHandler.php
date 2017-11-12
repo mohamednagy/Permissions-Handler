@@ -91,7 +91,7 @@ class PermissionsHandler
      *
      * @return void
      */
-    public function clearAnnotationsCache()
+    public function clearCachedAnnotations()
     {
         $this->annotationReader->clearLoadedAnnotations();
     }

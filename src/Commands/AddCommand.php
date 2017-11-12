@@ -5,7 +5,7 @@ namespace PermissionsHandler\Commands;
 use Illuminate\Console\Command;
 use PermissionsHandler;
 
-class AddPermission extends Command
+class AddCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -41,19 +41,21 @@ class AddPermission extends Command
         $permissionName = $this->option('permission');
         $roleName = $this->option('role');
 
-        if (!$permissionName || !$roleName) {
-            $this->error('both permission and role are required');
+        if (!$permissionName && !$roleName) {
+            $this->error('permission or role is required');
 
             return;
         }
 
         $userModel = PermissionsHandler::user();
 
-        $permission = PermissionsHandler::addPermission($permissionName);
-        $role = PermissionsHandler::addRole($roleName);
-
-        PermissionsHandler::assignPermissionToRole($permission, $role);
-
-        $this->info('All is done!');
+        if($permissionName){
+            $permission = PermissionsHandler::addPermission($permissionName);
+            $this->info('Permission has been created!');
+        }
+        if($roleName){
+            $role = PermissionsHandler::addRole($roleName);
+            $this->info('Role has been created!');
+        }
     }
 }

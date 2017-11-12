@@ -20,8 +20,8 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
         // register console commands
         if ($this->app->runningInConsole()) {
             $this->commands([
-                \PermissionsHandler\Commands\AddPermission::class,
-                \PermissionsHandler\Commands\AssignRole::class,
+                \PermissionsHandler\Commands\AddCommand::class,
+                \PermissionsHandler\Commands\AssignCommand::class,
                 \PermissionsHandler\Commands\ClearAnnotationsCache::class,
             ]);
         }

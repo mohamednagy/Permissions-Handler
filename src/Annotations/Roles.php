@@ -24,7 +24,7 @@ class Roles implements Checkable
         if (!$user) {
             return false;
         }
-        
+
         $result = false;
         foreach ($roles as $role) {
             $hasRole = $user->hasRole($role);

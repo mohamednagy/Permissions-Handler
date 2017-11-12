@@ -3,12 +3,12 @@
 namespace PermissionsHandler\Middleware;
 
 use Closure;
-use PermissionsHandler;
-use PermissionsHandler\Roles;
-use PermissionsHandler\Permissions;
 use Illuminate\Contracts\Auth\Guard;
+use PermissionsHandler;
+use PermissionsHandler\Permissions;
+use PermissionsHandler\Roles;
 
-class RouteMiddleware
+class RouteMiddlleware
 {
     protected $auth;
 
@@ -55,6 +55,7 @@ class RouteMiddleware
 
             return abort(403);
         }
+
         return $next($request);
     }
 }

@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\Auth\Guard;
 use PermissionsHandler;
 
-class PermissionsHandlerMiddleware
+class MethodMiddleware
 {
     protected $auth;
 

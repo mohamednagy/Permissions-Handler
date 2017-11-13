@@ -87,12 +87,33 @@ class PermissionsHandler
     }
 
     /**
-     * clear all cached annotations.
+     * Clear all cached annotations.
      *
      * @return void
      */
     public function clearCachedAnnotations()
     {
         $this->annotationReader->clearLoadedAnnotations();
+    }
+
+    /**
+     * Retrive permissions handler user
+     *
+     * @param int $id
+     * @return void
+     */
+    public function user($id = null)
+    {
+        $user = $this->config['user'];
+        if ($id) {
+            return $user::find($id);
+        }
+
+        $user = auth()->user();
+        if ($user) {
+            return $user;
+        }
+        
+        return new $user();
     }
 }

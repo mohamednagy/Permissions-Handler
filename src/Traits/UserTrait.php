@@ -19,6 +19,18 @@ trait UserTrait
     }
 
     /**
+     * delete user
+     *
+     * @param array $options
+     * @return void
+     */
+    public function delete()
+    {
+        $this->clearCachedRoles();
+        parent::delete();
+    }
+
+    /**
      * Get user cached roles.
      *
      * @return array
@@ -90,6 +102,30 @@ trait UserTrait
     public function canDo($permission)
     {
         return in_array($permission, $this->cachedPermissions());
+    }
+
+    /**
+     * assign role to user
+     *
+     * @param Illuminate\Database\Eloquent\Model $role
+     * @return void
+     */
+    public function assignRole($role)
+    {
+        $this->roles()->attach($role->id);
+        $this->clearCachedRoles();
+    }
+
+    /**
+     * remove a role from a user
+     *
+     * @param \Illuminate\Database\Eloquent\Model $role
+     * @return void
+     */
+    public function unAssignRole($role)
+    {
+        $this->roles()->detach($role->id);
+        $this->clearCachedRoles();
     }
 
     /**

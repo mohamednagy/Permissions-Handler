@@ -2,9 +2,10 @@
 
 namespace PermissionsHandler\Commands;
 
-use Illuminate\Console\Command;
 use PermissionsHandler;
+use Illuminate\Console\Command;
 use PermissionsHandler\Models\Role;
+use PermissionsHandler\Models\Permission;
 
 class AssignCommand extends Command
 {
@@ -51,12 +52,12 @@ class AssignCommand extends Command
 
         $permission = null;
         if ($permissionName) {
-            $permission = PermissionsHandler::addPermission($permissionName);
+            $permission = Permission::firstOrCreate(['name' =>  $permissionName]);
         }
 
         $role = null;
         if ($roleName) {
-            $role = PermissionsHandler::addRole($roleName);
+            $role = Role::firstOrCreate(['name' => $roleName]);
         }
 
         $user = null;
@@ -65,12 +66,12 @@ class AssignCommand extends Command
         }
 
         if ($role && $permission) {
-            PermissionsHandler::assignPermissionToRole($permission, $role);
+            $role->assignPermission($permission);
             $this->info("`$permissionName` has been assigned to `$roleName`");
         }
 
         if ($user && $role) {
-            PermissionsHandler::assignRoleToUser($user, $role);
+            $user->assignRole($role);
             $this->info("`$roleName` has been assigned to user `$userId`");
         }
     }

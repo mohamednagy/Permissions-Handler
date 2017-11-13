@@ -3,9 +3,12 @@
 namespace PermissionsHandler\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use PermissionsHandler\Traits\RoleTrait;
 
 class Role extends Model
 {
+    use RoleTrait;
+    
     protected $table = 'roles';
 
     protected $guarded = [];
@@ -17,6 +20,6 @@ class Role extends Model
 
     public function users()
     {
-        return $this->belongsToMany(cofig('permissionsHandler.user'), 'role_user');
+        return $this->belongsToMany(config('permissionsHandler.user'), 'role_user');
     }
 }

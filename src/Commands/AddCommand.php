@@ -2,8 +2,10 @@
 
 namespace PermissionsHandler\Commands;
 
-use Illuminate\Console\Command;
 use PermissionsHandler;
+use Illuminate\Console\Command;
+use PermissionsHandler\Models\Role;
+use PermissionsHandler\Models\Permission;
 
 class AddCommand extends Command
 {
@@ -47,14 +49,12 @@ class AddCommand extends Command
             return;
         }
 
-        $userModel = PermissionsHandler::user();
-
         if ($permissionName) {
-            $permission = PermissionsHandler::addPermission($permissionName);
+            $permission = Permission::firstOrCreate(['name' => $permissionName]);
             $this->info('Permission has been created!');
         }
         if ($roleName) {
-            $role = PermissionsHandler::addRole($roleName);
+            $role = Role::firstOrCreate(['name' => $roleName]);
             $this->info('Role has been created!');
         }
     }

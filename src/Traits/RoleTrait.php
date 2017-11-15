@@ -17,6 +17,18 @@ trait RoleTrait
         parent::delete();
     }
 
+    public function hasPermission($permission)
+    {
+        $hasPermission = false;
+        if(is_string($permission)){
+            $hasPermission = $this->permissions->contains('name', $permission);
+        }
+        else if(is_object($permission)){
+            $hasPermission = $this->permissions->contains('id', $permission->id);
+        }
+        return $hasPermission;
+    }
+
     /**
      * Assign permission to role
      *
@@ -37,10 +49,10 @@ trait RoleTrait
     /**
      * Assign many permission to a role
      *
-     * @param array $permissions
+     * @param Illuminate\Database\Eloquent\Collection|array $permissions
      * @return void
      */
-    public function assignPermissions($permissions = [])
+    public function assignPermissions($permissions)
     {
         $rolePermissions = $this->permissions->pluck('id')->toArray();
         foreach ($permissions as $permission) {
@@ -79,10 +91,10 @@ trait RoleTrait
     /**
      * Unassign many permission from a role
      *
-     * @param array $permissions
+     * @param Illuminate\Database\Eloquent\Collection|array $permissions
      * @return void
      */
-    public function unAssignPermissions($permissions = [])
+    public function unAssignPermissions($permissions)
     {
         $rolePermissions = $this->permissions->pluck('id')->toArray();
         foreach ($permissions as $permission) {

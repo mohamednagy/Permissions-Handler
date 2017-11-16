@@ -7,11 +7,9 @@ namespace PermissionsHandler;
  */
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\FileCacheReader;
-use PermissionsHandler\Traits\CrudTrait;
 
 class PermissionsHandler
 {
-    use CrudTrait;
 
     protected $annotationReader;
     protected $config = [];
@@ -34,9 +32,6 @@ class PermissionsHandler
      */
     public function canGo($request)
     {
-        if ($this->isExcludedRoute($request)) {
-            return true;
-        }
         $annotations = $this->getAnnotationsFromRequest($request);
         if ($this->config['aggressiveMode'] == true && empty($annotations)) {
             return false;

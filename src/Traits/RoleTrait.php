@@ -20,10 +20,9 @@ trait RoleTrait
     public function hasPermission($permission)
     {
         $hasPermission = false;
-        if(is_string($permission)){
+        if (is_string($permission)) {
             $hasPermission = $this->permissions->contains('name', $permission);
-        }
-        else if(is_object($permission)){
+        } elseif (is_object($permission)) {
             $hasPermission = $this->permissions->contains('id', $permission->id);
         }
         return $hasPermission;

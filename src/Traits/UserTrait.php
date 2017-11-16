@@ -77,10 +77,9 @@ trait UserTrait
      */
     public function hasRole($role)
     {
-        if(is_string($role)){
+        if (is_string($role)) {
             return in_array($role, $this->cachedRoles());
-        }
-        else{
+        } else {
             return in_array($role->id, $this->cachedRoles());
         }
     }

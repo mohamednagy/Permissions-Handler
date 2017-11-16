@@ -3,19 +3,12 @@
 namespace PermissionsHandler\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Auth\Guard;
 use PermissionsHandler;
-use PermissionsHandler\Permissions;
 use PermissionsHandler\Roles;
+use PermissionsHandler\Permissions;
 
-class RouteMiddlleware
+class RouteMiddleware
 {
-    protected $auth;
-
-    public function __construct(Guard $auth)
-    {
-        $this->auth = $auth;
-    }
 
     /**
      * Handle an incoming request.
@@ -28,6 +21,10 @@ class RouteMiddlleware
      */
     public function handle($request, Closure $next, ...$rolesAndPermissions)
     {
+        if (PermissionsHandler::isExcludedRoute($request)) {
+            return $next($request);
+        }
+        
         $permissions = null;
         $roles = null;
         $canGo = false;

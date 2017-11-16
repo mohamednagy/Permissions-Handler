@@ -20,7 +20,7 @@ class Permissions implements Checkable
     public function check($isAggressive)
     {
         $permissions = isset($this->permissions['value']) ? $this->permissions['value'] : $this->permissions;
-        $user = app('Illuminate\Http\Request')->user();
+        $user = auth()->user();
 
         if (!$user) {
             return false;

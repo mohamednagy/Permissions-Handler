@@ -20,7 +20,7 @@ class Roles implements Checkable
     public function check($isAggressive)
     {
         $roles = isset($this->roles['value']) ? $this->roles['value'] : $this->roles;
-        $user = app('Illuminate\Http\Request')->user();
+        $user = auth()->user();
         if (!$user) {
             return false;
         }

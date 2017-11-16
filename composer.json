@@ -10,8 +10,18 @@
     "autoload": {
         "psr-4": { "PermissionsHandler\\": "src/" }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "PermissionsHandler\\Tests\\": "tests/"
+        }
+    },
     "require": {
         "doctrine/annotations" : "1.4.*"
+    },
+    "require-dev": {
+        "monolog/monolog": "^1.22",
+        "orchestra/testbench": "~3.3.0|~3.4.2|~3.5.0",
+        "phpunit/phpunit" : "^5.7|6.2"
     },
     "extra": {
         "laravel": {

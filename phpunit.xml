@@ -1,0 +1,27 @@
+<phpunit colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         stopOnFailure="true"
+         strict="true"
+         verbose="true"
+         bootstrap="vendor/autoload.php">
+
+    <testsuites>
+        <testsuite>
+            <directory>./tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>./src</directory>
+        </whitelist>
+    </filter>
+
+    <php>
+        <env name="AMPLIFYPAY_MERCHANT_ID" value="SomeDummyStuff"/>
+        <env name="AMPLIFYPAY_API_KEY" value="SomeDummyKey"/>
+        <env name="PAYSTACK_SECRET_KEY" value="SecretKey"/>
+    </php>
+</phpunit>

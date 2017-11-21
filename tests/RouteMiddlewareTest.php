@@ -3,28 +3,32 @@
 namespace PermissionsHandler\Tests;
 
 
-use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Http\Response;
-use Illuminate\Validation\UnauthorizedException;
-use PermissionsHandler\Middleware\RouteMiddlleware;
 use PermissionsHandler;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Validation\UnauthorizedException;
+use PermissionsHandler\Middleware\RouteMiddleware;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class RouteMiddlewareTest extends TestCase
 {
     protected $routeMiddleware;
+    protected $request;
 
     public function setUp()
     {
         parent::setUp();
-        $this->routeMiddleware = new RouteMiddlleware(\Auth::guard('web'));
+        $this->routeMiddleware = new RouteMiddleware();
+
+        $this->request = Request::create('http://permissions.dev', 'GET');
     }
     /** @test */
     public function a_guest_cannot_access_a_route_protected_by_the_role_middleware()
     {
         $this->assertEquals(
             $this->runMiddleware(
-                $this->routeMiddleware, 'permissions@add-user;edit-user,roles@admin'
+                $this->routeMiddleware, 'permissions@userPermission', 'roles@user'
             ), 403);
     }
 
@@ -50,12 +54,18 @@ class RouteMiddlewareTest extends TestCase
             ), 403);
     }
 
-    protected function runMiddleware($middleware, array $parameters)
+    protected function runMiddleware($middleware, ...$parameters)
     {
         try {
-            return $middleware->handle(new \Request(), function () {
-                return (new Response())->setContent('<html></html>');
-            }, $parameters[0], $parameters[1])->status();
+            $middlewareParameters = [
+                $this->request,
+                function () {
+                    return (new Response())->setContent('<html></html>');
+                }
+            ];
+            $middlewareParameters = array_merge($middlewareParameters, $parameters);
+            call_user_func_array([$middleware, 'handle'], $middlewareParameters);
+
         } catch (\PermissionsHandler\Exceptions\UnauthorizedException $e) {
             return $e->getStatusCode();
         }

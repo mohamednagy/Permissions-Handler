@@ -29,32 +29,21 @@ trait RoleTrait
     }
 
     /**
-     * Assign permission to role
-     *
-     * @param \Illuminate\Database\Eloquent\Model $permission
-     * @return void
-     */
-    public function assignPermission($permission)
-    {
-        $permissions = $this->permissions->pluck('id')->toArray();
-        if (in_array($permission->id, $permissions)) {
-            return false;
-        }
-        $this->permissions()->attach($permission->id);
-        $this->clearRelatedCache();
-    }
-
-
-    /**
      * Assign many permission to a role
      *
-     * @param Illuminate\Database\Eloquent\Collection|array $permissions
+     * @param Illuminate\Database\Eloquent\Collection|Model|array $permissions
      * @return void
      */
-    public function assignPermissions($permissions)
+    public function assignPermission($permissions)
     {
+        if (!is_array($permissions)) {
+            $permissions = [$permissions];
+        }
         $rolePermissions = $this->permissions->pluck('id')->toArray();
         foreach ($permissions as $permission) {
+            if (in_array($permission->id, $rolePermissions)) {
+                continue;
+            }
             $rolePermissions[] = $permission->id;
         }
         $this->permissions()->sync($rolePermissions);
@@ -68,36 +57,26 @@ trait RoleTrait
      *
      * @return void
      */
-    public function unAssignAllPermission()
+    public function unAssignAllPermissions()
     {
         $this->permissions()->sync([]);
-        $this->clearRelatedCache();
-    }
-
-
-    /**
-     * Unassign permission from role
-     *
-     * @param \Illuminate\Database\Eloquent\Model $permission
-     * @return void
-     */
-    public function unAssignPermission($permission)
-    {
-        $this->permissions()->detach($permission->id);
         $this->clearRelatedCache();
     }
 
     /**
      * Unassign many permission from a role
      *
-     * @param Illuminate\Database\Eloquent\Collection|array $permissions
+     * @param Illuminate\Database\Eloquent\Collection|Model|array $permissions
      * @return void
      */
-    public function unAssignPermissions($permissions)
+    public function unAssignPermission($permissions)
     {
+        if (!is_array($permissions)) {
+            $permissions = [$permissions];
+        }
         $rolePermissions = $this->permissions->pluck('id')->toArray();
         foreach ($permissions as $permission) {
-            if ($key = array_search($permission->id, $rolePermissions) !== false) {
+            if (($key = array_search($permission->id, $rolePermissions)) !== false) {
                 unset($rolePermissions[$key]);
             }
         }

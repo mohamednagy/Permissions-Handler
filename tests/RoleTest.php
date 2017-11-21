@@ -10,28 +10,30 @@ use PermissionsHandler\Exceptions\RoleAlreadyExists;
 class RoleTest extends TestCase
 {
     /** @test */
-    public function it_has_user_models_of_the_right_class()
+    public function it_can_assign_permission_to_role()
     {
-        PermissionsHandler::assignRoleToUser($this->testAdminRole, $this->testAdmin);
-        PermissionsHandler::assignRoleToUser($this->testUserRole, $this->testUser);
-
-        $this->assertCount(1, $this->testUserRole->users);
-        $this->assertTrue($this->testUserRole->users->first()->is($this->testUser));
-        $this->assertInstanceOf(User::class, $this->testUserRole->users->first());
+        $this->userRoleModel->assignPermission($this->userPermissionModel);
+        $this->assertTrue($this->userRoleModel->permissions->contains('id', $this->userPermissionModel->id));
     }
 
     /** @test */
-    public function it_throws_an_exception_when_the_role_already_exists()
+    public function it_has_permission()
     {
-        $this->expectException(RoleAlreadyExists::class);
-        app(Role::class)->create(['name' => 'test-role']);
-        app(Role::class)->create(['name' => 'test-role']);
+        $this->assertTrue($this->userRoleModel->hasPermission($this->userPermissionModel));
     }
 
+
+    // /** @test */
+    // public function it_can_unassign_permission()
+    // {
+    //     $this->userRoleModel->unassignPermission($this->userPermissionModel);
+    //     $this->assertFalse($this->userRoleModel->permissions->contains('id', $this->userPermissionModel->id));
+    // }
+
     /** @test */
-    public function it_can_be_given_a_permission()
+    public function it_can_unassign_all_permissins()
     {
-        PermissionsHandler::assignPermissionToRole($this->testUserPermission, $this->testUserRole);
-        $this->assertTrue($this->testUserRole->permissions->contains('name', 'user-permission'));
+        $this->userRoleModel->unAssignAllPermissions();
+        $this->assertCount(0, $this->userRoleModel->permissions);
     }
 }

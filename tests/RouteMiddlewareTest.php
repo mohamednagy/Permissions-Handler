@@ -19,55 +19,118 @@ class RouteMiddlewareTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+
         $this->routeMiddleware = new RouteMiddleware();
 
-        $this->request = Request::create('http://permissions.dev', 'GET');
+        $this->request = Request::create('/', 'GET');
+
     }
     /** @test */
-    public function a_guest_cannot_access_a_route_protected_by_the_role_middleware()
+    public function a_guest_cannot_access_a_route_protected_by_the_route_middleware()
     {
-        $this->assertEquals(
-            $this->runMiddleware(
-                $this->routeMiddleware, 'permissions@userPermission', 'roles@user'
-            ), 403);
+        $status_code = null;
+        try{
+            $response = $this->routeMiddleware->handle(
+                $this->request,
+                function () { 
+                    return new Response();
+                },
+                'permissions@userPermissions', 'role@admin'
+            );
+        }
+        catch(\Exception $e){
+            $status_code = $e->getStatusCode();
+        }
+        $this->assertEquals($status_code, 403);
+        
     }
 
     /** @test */
     public function a_user_can_access_a_route_protected_by_route_middleware_if_have_this_role()
     {
-        \Auth::login($this->testUser);
-        PermissionsHandler::assignRoleToUser($this->testUserRole, $this->testUser);
-        $this->assertEquals(
-            $this->runMiddleware(
-                $this->routeMiddleware, ['permissions@add-user;edit-user' , 'roles@testRole']
-            ), 200);
+        $this->adminModel->assignRole($this->adminRoleModel);
+        auth()->login($this->adminModel);
+        
+        $status_code = null;
+        try{
+            $response = $this->routeMiddleware->handle(
+                $this->request,
+                function () { 
+                    return new Response();
+                },
+                'roles@admin'
+            );
+        }
+        catch(\Exception $e){
+            $status_code = $e->getStatusCode();
+        }
+        $this->assertNotEquals($status_code, 403);
     }
 
     /** @test */
     public function a_user_can_not_access_a_route_protected_by_route_middleware_if_have_not_this_role()
     {
-        \Auth::login($this->testUser);
-        PermissionsHandler::assignRoleToUser($this->testUserRole, $this->testUser);
-        $this->assertEquals(
-            $this->runMiddleware(
-                $this->routeMiddleware, 'permissions@add-user;edit-user,roles@testRole;'
-            ), 403);
+        $this->adminModel->assignRole($this->adminRoleModel);
+        auth()->login($this->adminModel);
+        $status_code = null;
+        try{
+            $response = $this->routeMiddleware->handle(
+                $this->request,
+                function () { 
+                    return new Response();
+                },
+                'roles@notExistsRole'
+            );
+        }
+        catch(\Exception $e){
+            $status_code = $e->getStatusCode();
+        }
+        $this->assertEquals($status_code, 403);
     }
 
-    protected function runMiddleware($middleware, ...$parameters)
-    {
-        try {
-            $middlewareParameters = [
-                $this->request,
-                function () {
-                    return (new Response())->setContent('<html></html>');
-                }
-            ];
-            $middlewareParameters = array_merge($middlewareParameters, $parameters);
-            call_user_func_array([$middleware, 'handle'], $middlewareParameters);
 
-        } catch (\PermissionsHandler\Exceptions\UnauthorizedException $e) {
-            return $e->getStatusCode();
+    /** @test */
+    public function a_user_can_access_a_route_protected_by_route_middleware_if_has_this_permission()
+    {
+        $this->userModel->assignRole($this->userRoleModel);
+        $this->userRoleModel->assignPermission($this->userPermissionModel);
+        auth()->login($this->userModel);
+        $status_code = null;
+        try{
+            $response = $this->routeMiddleware->handle(
+                $this->request,
+                function () { 
+                    return new Response();
+                },
+                'permissions@userPermission'
+            );
         }
+        catch(\Exception $e){
+            $status_code = $e->getStatusCode();
+        }
+        $this->assertNotEquals($status_code, 403);
+    }
+
+
+    /** @test */
+    public function a_user_can_not_access_a_route_protected_by_route_middleware_if_not_has_this_permission()
+    {
+        $this->userModel->assignRole($this->userRoleModel);
+        $this->userRoleModel->assignPermission($this->userPermissionModel);
+        auth()->login($this->userModel);
+        $status_code = null;
+        try{
+            $response = $this->routeMiddleware->handle(
+                $this->request,
+                function () { 
+                    return new Response();
+                },
+                'permissions@notExistsPermission'
+            );
+        }
+        catch(\Exception $e){
+            $status_code = $e->getStatusCode();
+        }
+        $this->assertEquals($status_code, 403);
     }
 }

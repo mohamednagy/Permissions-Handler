@@ -116,8 +116,10 @@ trait UserTrait
      */
     public function assignRole($role)
     {
-        $this->roles()->attach($role->id);
-        $this->clearCachedRoles();
+        if (!$this->roles->contains('id', $role->id)) {
+            $this->roles()->attach($role->id);
+            $this->clearCachedRoles();
+        }
     }
 
     /**

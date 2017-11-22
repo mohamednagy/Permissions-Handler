@@ -38,29 +38,12 @@ abstract class TestCase extends Orchestra
     {
         parent::setUp();
         $this->setUpDatabase($this->app);
-        $this->userModel = User::find(1);
-        $this->adminModel = User::find(2);
-
-        $this->userRoleModel = app(Role::class)->where('name', self::USER_ROLE)->first();
-        $this->adminRoleModel = app(Role::class)->where('name', self::ADMIN_ROLE)->first();
-
-        $this->userPermissionModel = app(Permission::class)->where('name', self::USER_PERMISSION)->first();
-        $this->adminPermissionModel = app(Permission::class)->where('name', self::ADMIN_PERMISSION)->first();
+        $this->seedDatabase($this->app);
+        $this->loadModels();
 
         $this->clearLogTestHandler();
     }
 
-    /**
-     * @param \Illuminate\Foundation\Application $app
-     *
-     * @return array
-     */
-    protected function getPackageProviders($app)
-    {
-        return [
-            PermissionsHandlerServiceProvider::class,
-        ];
-    }
     /**
      * Set up the environment.
      *
@@ -71,12 +54,12 @@ abstract class TestCase extends Orchestra
         $app['config']->set('database.default', 'mysql');
         $app['config']->set('database.connections.mysql', [
             'driver' => 'mysql',
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'permissions2'),
-            'username' => env('DB_USERNAME', 'root'),
-            'password' => env('DB_PASSWORD', 'root'),
-            'unix_socket' => env('DB_SOCKET', ''),
+            'host' => '127.0.0.1',
+            'port' => '3306',
+            'database' => 'permissions2',
+            'username' => 'root',
+            'password' => 'root',
+            'unix_socket' => '',
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
@@ -84,12 +67,22 @@ abstract class TestCase extends Orchestra
             'engine' => null,
         ]);
         
-        $configs = include_once './src/Config/permissionsHandler.php';
-        $app['config']->set('permissionsHandler', $configs);
         $app['config']->set('app.key', 'base64:L8lRK8Go1NWCvy03sjPInQb2pA74FXweFLX4N9MHP68=');
         // Use test User model for users provider
         $app['config']->set('auth.providers.users.model', User::class);
         $app['log']->getMonolog()->pushHandler(new TestHandler());
+
+        $this->setPackageConfigs($app);
+    }
+
+    public function setPackageConfigs($app)
+    {
+        $configs = include_once './src/Config/permissionsHandler.php';
+        $app['config']->set('permissionsHandler.user', User::class);
+        $app['config']->set('permissionsHandler.redirectUrl', $configs['redirectUrl']);
+        $app['config']->set('permissionsHandler.aggressiveMode', $configs['aggressiveMode']);
+        $app['config']->set('permissionsHandler.excludedRoutes', (array)$configs['excludedRoutes']);
+        $app['config']->set('permissionsHandler.cacheExpiration', $configs['cacheExpiration']);
     }
     /**
      * Set up the database.
@@ -107,7 +100,10 @@ abstract class TestCase extends Orchestra
         include_once __DIR__.'/../src/Migrations/migrations.php';
 
         (new \CreateUserPermissionsMigrations())->up();
+    }
 
+    public function seedDatabase($app)
+    {
         // database seeding
         User::firstOrCreate(['name' => 'test user' , 'email' => 'user@permissions.com']);
         User::firstOrCreate(['name' =>  'test admin' ,'email' => 'admin@permissions.com']);
@@ -117,6 +113,19 @@ abstract class TestCase extends Orchestra
 
         $app[Permission::class]->firstOrCreate(['name' => self::USER_PERMISSION]);
         $app[Permission::class]->firstOrCreate(['name' => self::ADMIN_PERMISSION]);
+    }
+
+
+    public function loadModels()
+    {
+        $this->userModel = User::whereEmail('user@permissions.com')->first();
+        $this->adminModel = User::whereEmail('admin@permissions.com')->first();
+
+        $this->userRoleModel = app(Role::class)->where('name', self::USER_ROLE)->first();
+        $this->adminRoleModel = app(Role::class)->where('name', self::ADMIN_ROLE)->first();
+
+        $this->userPermissionModel = app(Permission::class)->where('name', self::USER_PERMISSION)->first();
+        $this->adminPermissionModel = app(Permission::class)->where('name', self::ADMIN_PERMISSION)->first();
     }
 
    
@@ -144,6 +153,23 @@ abstract class TestCase extends Orchestra
             })->count() > 0;
     }
 
+    /**
+     * @param \Illuminate\Foundation\Application $app
+     *
+     * @return array
+     */
+    protected function getPackageProviders($app)
+    {
+        return [
+            PermissionsHandlerServiceProvider::class,
+        ];
+    }
+
+    /**
+     * @param \Illuminate\Foundation\Application $app
+     *
+     * @return array
+     */
     protected function getPackageAliases($app)
     {
         return [

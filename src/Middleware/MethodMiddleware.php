@@ -21,7 +21,7 @@ class MethodMiddleware
         if (PermissionsHandler::isExcludedRoute($request)) {
             return $next($request);
         }
-
+        
         if (!PermissionsHandler::canGo($request)) {
             $redirectTo = config('permissionsHandler.redirectUrl');
             if ($redirectTo) {

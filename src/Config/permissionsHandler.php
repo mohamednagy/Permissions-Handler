@@ -19,7 +19,7 @@ return [
    * False:   1- If there are no permissions for this method then its considered as a public and PermissionsHandler will allow access
    *          2- If the user has one of the assigned permissions to the method then allow access
    */
-  'aggressiveMode' => true,
+  'aggressiveMode' => false,
 
   /*
    * exlude routes paths from PermissionsHandler hands

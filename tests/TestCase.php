@@ -67,22 +67,18 @@ abstract class TestCase extends Orchestra
             'engine' => null,
         ]);
         
-        $app['config']->set('app.key', 'base64:L8lRK8Go1NWCvy03sjPInQb2pA74FXweFLX4N9MHP68=');
-        // Use test User model for users provider
-        $app['config']->set('auth.providers.users.model', User::class);
-        $app['log']->getMonolog()->pushHandler(new TestHandler());
-
-        $this->setPackageConfigs($app);
-    }
-
-    public function setPackageConfigs($app)
-    {
         $configs = include_once './src/Config/permissionsHandler.php';
         $app['config']->set('permissionsHandler.user', User::class);
         $app['config']->set('permissionsHandler.redirectUrl', $configs['redirectUrl']);
         $app['config']->set('permissionsHandler.aggressiveMode', $configs['aggressiveMode']);
         $app['config']->set('permissionsHandler.excludedRoutes', (array)$configs['excludedRoutes']);
         $app['config']->set('permissionsHandler.cacheExpiration', $configs['cacheExpiration']);
+
+        
+        $app['config']->set('app.key', 'base64:L8lRK8Go1NWCvy03sjPInQb2pA74FXweFLX4N9MHP68=');
+        // Use test User model for users provider
+        $app['config']->set('auth.providers.users.model', User::class);
+        $app['log']->getMonolog()->pushHandler(new TestHandler());
     }
     /**
      * Set up the database.

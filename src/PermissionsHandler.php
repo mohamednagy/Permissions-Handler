@@ -77,7 +77,7 @@ class PermissionsHandler
             $reflectionMethod = new \ReflectionMethod($class, $method);
             $annotations = $this->annotationReader->getMethodAnnotations($reflectionMethod);
         }
-
+        
         return $annotations;
     }
 

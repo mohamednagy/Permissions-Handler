@@ -10,7 +10,7 @@ function store(Request $request){
 }
 
 /**
-* @PermissoinsHandler\Role({"admin"})
+* @PermissoinsHandler\Roles({"admin"})
 */
 function delete(Request $request){
     // your code here
@@ -27,11 +27,6 @@ In this example, only users who has a permission `add-user` will being allowed t
     * [Blade directive](https://github.com/mohamednagy/Permissions-Handler/wiki/usage#blade-directives)
     * [Within your code](https://github.com/mohamednagy/Permissions-Handler/wiki/usage#within-your-code)
     * [Artisan commands](https://github.com/mohamednagy/Permissions-Handler/wiki/usage#artisan-commands)
-
-## Change Log
-* Enhance and adding new artisan commands (add-permission, add-role, assign-permission, assign-roles)
-* PermissionsHandler to handle `Route::group` and `namespace` permissions
-* move the `aggressiveMode` from global attitude to method attitude.
 
 ## License
 

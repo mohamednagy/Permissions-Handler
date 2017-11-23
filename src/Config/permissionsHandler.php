@@ -33,4 +33,10 @@ return [
    */
   'cacheExpiration' => 60,
 
+  /**
+   * Allow to save the created permissions, roles and role-permission to files
+   * to be seeded using artisan command
+   */
+  'seeder' => true,
+
 ];

@@ -21,9 +21,11 @@ class Role extends Model
      */
     public static function boot()
     {
-        self::created(function ($role) {
-            Seeder::seedRole($role);
-        });
+        if (config('permissionsHandler.seeder') == true) {
+            self::created(function ($role) {
+                Seeder::seedRole($role);
+            });
+        }
     }
 
     public function permissions()

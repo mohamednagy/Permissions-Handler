@@ -50,7 +50,9 @@ trait RoleTrait
         }
         $this->permissions()->sync($rolePermissions);
 
-        Seeder::assignPermissionsToRole($this, $permissions);
+        if (config('permissionsHandler.seeder') == true) {
+            Seeder::assignPermissionsToRole($this, $permissions);
+        }
 
         $this->clearRelatedCache();
     }
@@ -65,7 +67,9 @@ trait RoleTrait
     {
         $this->permissions()->sync([]);
 
-        Seeder::unAssignAllRolePermissions($this);
+        if (config('permissionsHandler.seeder') == true) {
+            Seeder::unAssignAllRolePermissions($this);
+        }
 
         $this->clearRelatedCache();
     }
@@ -89,7 +93,9 @@ trait RoleTrait
         }
         $this->permissions()->sync($rolePermissions);
 
-        Seeder::unAssignRolePermissions($this, $permissions);
+        if (config('permissionsHandler.seeder') == true) {
+            Seeder::unAssignRolePermissions($this, $permissions);
+        }
 
         $this->clearRelatedCache();
     }

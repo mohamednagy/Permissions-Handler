@@ -18,9 +18,11 @@ class Permission extends Model
      */
     public static function boot()
     {
-        self::created(function ($permission) {
-            Seeder::seedPermission($permission);
-        });
+        if (config('permissionsHandler.seeder') == true) {
+            self::created(function ($permission) {
+                Seeder::seedPermission($permission);
+            });
+        }
     }
 
     public function roles()

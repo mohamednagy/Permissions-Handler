@@ -71,14 +71,16 @@ abstract class TestCase extends Orchestra
         $app['config']->set('filesystems.disks.permissions.driver', 'local');
         $app['config']->set('filesystems.disks.permissions.root', base_path() . '/database/seeds/permissions-handler');
 
-        $configs = include_once './src/Config/permissionsHandler.php';
-        $app['config']->set('permissionsHandler.user', User::class);
-        $app['config']->set('permissionsHandler.redirectUrl', $configs['redirectUrl']);
-        $app['config']->set('permissionsHandler.aggressiveMode', $configs['aggressiveMode']);
-        $app['config']->set('permissionsHandler.excludedRoutes', (array)$configs['excludedRoutes']);
-        $app['config']->set('permissionsHandler.cacheExpiration', $configs['cacheExpiration']);
+        $configs = [
+            'user' => User::class,
+            'redirectUrl' => null,
+            'aggressiveMode' => false,
+            'excludedRoutes' => ['login', 'register'],
+            'cacheExpiration' => 60,
+            'seeder' => true
+        ];
+        $app['config']->set('permissionsHandler', $configs);
 
-        
         $app['config']->set('app.key', 'base64:L8lRK8Go1NWCvy03sjPInQb2pA74FXweFLX4N9MHP68=');
         // Use test User model for users provider
         $app['config']->set('auth.providers.users.model', User::class);

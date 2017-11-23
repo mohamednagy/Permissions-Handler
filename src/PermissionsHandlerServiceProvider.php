@@ -22,6 +22,7 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
             $this->commands([
                 \PermissionsHandler\Commands\AddCommand::class,
                 \PermissionsHandler\Commands\AssignCommand::class,
+                \PermissionsHandler\Commands\SeederCommand::class,
                 \PermissionsHandler\Commands\ClearAnnotationsCache::class,
             ]);
         }

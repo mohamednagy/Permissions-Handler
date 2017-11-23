@@ -111,7 +111,7 @@ class Seeder {
      * @param string $file
      * @return array
      */
-    private static function getFileContent($file)
+    public static function getFileContent($file)
     {
         $content = [];
 
@@ -131,7 +131,7 @@ class Seeder {
      * @param array|string $content
      * @return void
      */
-    private static function saveFileContent($file, $content)
+    public static function saveFileContent($file, $content)
     {
         $content = is_array($content) ? json_encode($content) : $content;
         Storage::disk('permissions')->put($file, $content);

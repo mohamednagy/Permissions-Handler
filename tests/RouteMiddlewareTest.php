@@ -7,7 +7,6 @@ use PermissionsHandler;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Validation\UnauthorizedException;
 use PermissionsHandler\Middleware\RouteMiddleware;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 

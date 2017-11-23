@@ -6,7 +6,6 @@ use PermissionsHandler;
 use PermissionsHandler\Models\Role;
 use PermissionsHandler\Seeder\Seeder;
 use PermissionsHandler\Tests\Models\User;
-use PermissionsHandler\Exceptions\RoleAlreadyExists;
 
 class RoleTest extends TestCase
 {
@@ -21,7 +20,7 @@ class RoleTest extends TestCase
     {
         $this->userRoleModel->assignPermission($this->userPermissionModel);
         $this->assertTrue($this->userRoleModel->permissions->contains('id', $this->userPermissionModel->id));
-        
+
         if (config('permissionsHandler.seeder') == true) {
             $roles = Seeder::getFileContent('role-permissions.json');
             $this->assertTrue(in_array($this->userPermissionModel->name, $roles[$this->userRoleModel->name]));

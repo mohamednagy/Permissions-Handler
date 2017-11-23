@@ -2,6 +2,8 @@
 
 namespace PermissionsHandler\Traits;
 
+use PermissionsHandler\Seeder\Seeder;
+
 trait RoleTrait
 {
     /**
@@ -48,6 +50,8 @@ trait RoleTrait
         }
         $this->permissions()->sync($rolePermissions);
 
+        Seeder::assignPermissionsToRole($this, $permissions);
+
         $this->clearRelatedCache();
     }
 
@@ -60,6 +64,9 @@ trait RoleTrait
     public function unAssignAllPermissions()
     {
         $this->permissions()->sync([]);
+
+        Seeder::unAssignAllRolePermissions($this);
+
         $this->clearRelatedCache();
     }
 
@@ -81,6 +88,8 @@ trait RoleTrait
             }
         }
         $this->permissions()->sync($rolePermissions);
+
+        Seeder::unAssignRolePermissions($this, $permissions);
 
         $this->clearRelatedCache();
     }

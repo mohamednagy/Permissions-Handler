@@ -66,7 +66,11 @@ abstract class TestCase extends Orchestra
             'strict' => true,
             'engine' => null,
         ]);
-        
+
+        $app['config']->set('filesystems.default', 'local');
+        $app['config']->set('filesystems.disks.permissions.driver', 'local');
+        $app['config']->set('filesystems.disks.permissions.root', base_path() . '/database/seeds/permissions-handler');
+
         $configs = include_once './src/Config/permissionsHandler.php';
         $app['config']->set('permissionsHandler.user', User::class);
         $app['config']->set('permissionsHandler.redirectUrl', $configs['redirectUrl']);

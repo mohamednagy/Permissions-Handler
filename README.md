@@ -3,14 +3,14 @@ Permissions-handler is an easy-to-use third party package for laravel 5  to mana
 
 ```
 /**
-* @PermissoinsHandler\Permissoins({"add-users"})
+* @PermissoinsHandler\Permissions({"add-users"})
 */
 function store(Request $request){
     // your code here
 }
 
 /**
-* @PermissoinsHandler\Roles({"admin"})
+* @PermissionsHandler\Roles({"admin"})
 */
 function delete(Request $request){
     // your code here

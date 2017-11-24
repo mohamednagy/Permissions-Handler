@@ -7,6 +7,7 @@ use PermissionsHandler;
 use Illuminate\Support\Facades\Route;
 use PermissionsHandler\Middleware\MethodMiddleware;
 use PermissionsHandler\Tests\Controllers\TestController;
+use PermissionsHandler\Tests\Models\Post;
 
 
 class MethodMiddlewareTest extends TestCase {
@@ -25,6 +26,7 @@ class MethodMiddlewareTest extends TestCase {
         Route::get('/mustHasAllRoles', 'PermissionsHandler\Tests\Controllers\TestController@mustHasAllRoles');
         Route::get('/checkAdminPermission', 'PermissionsHandler\Tests\Controllers\TestController@checkAdminPermission');
         Route::get('/mustHasAllPermissions', 'PermissionsHandler\Tests\Controllers\TestController@mustHasAllPermissions');
+        Route::get('/ownPost/{id}', 'PermissionsHandler\Tests\Controllers\TestController@ownPost');
 
     }
 
@@ -74,6 +76,25 @@ class MethodMiddlewareTest extends TestCase {
         $this->userModel->assignRole($this->userRoleModel);
         $this->actingAs($this->userModel);
         $response = $this->get('/mustHasAllPermissions');
+        $response->assertStatus(403);
+    }
+
+    /** @test */
+    public function a_user_can_access_method_if_he_own_the_post()
+    {
+        $post = Post::firstOrCreate(['user_id' => $this->userModel->id]);
+        $this->actingAs($this->userModel);
+        $response = $this->get('/ownPost/'.$post->id);
+        $response->assertSee('accessed');
+    }
+
+    /** @test */
+    public function a_user_can_not_access_method_if_he_does_not_own_the_post()
+    {
+        // assign a post to a user and check by another user
+        $post = Post::firstOrCreate(['user_id' => $this->userModel->id]);
+        $this->actingAs($this->adminModel);
+        $response = $this->get('/ownPost/'.$post->id);
         $response->assertStatus(403);
     }
 

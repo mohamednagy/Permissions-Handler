@@ -4,10 +4,11 @@ namespace PermissionsHandler\Tests\Models;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use PermissionsHandler\Traits\UserTrait;
+use PermissionsHandler\Tests\Models\Post;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use PermissionsHandler\Traits\UserTrait;
 
 class User extends Model implements AuthorizableContract, AuthenticatableContract
 {
@@ -21,4 +22,10 @@ class User extends Model implements AuthorizableContract, AuthenticatableContrac
     protected $fillable = ['email', 'name', 'password'];
     public $timestamps = false;
     protected $table = 'users';
+
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
 }

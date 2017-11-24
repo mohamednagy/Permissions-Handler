@@ -46,5 +46,6 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
         // register annotation
         AnnotationRegistry::registerFile(__DIR__.'/Annotations/Permissions.php');
         AnnotationRegistry::registerFile(__DIR__.'/Annotations/Roles.php');
+        AnnotationRegistry::registerFile(__DIR__.'/Annotations/Owns.php');
     }
 }

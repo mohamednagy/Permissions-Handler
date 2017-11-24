@@ -2,6 +2,7 @@
 
 namespace PermissionsHandler\Tests\Controllers;
 
+use PermissionsHandler\Owns;
 use PermissionsHandler\Roles;
 use Illuminate\Routing\Controller;
 use PermissionsHandler\Permissions;
@@ -71,6 +72,18 @@ class TestController extends Controller
      * @return void
      */
     public function mustHasAllPermissions()
+    {
+        return 'accessed';
+    }
+
+    /**
+     * a use must owns the post to be all to access
+     * 
+     * @Owns(relation="posts", attribute="id")
+     *
+     * @return void
+     */
+    public function ownPost()
     {
         return 'accessed';
     }

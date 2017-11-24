@@ -99,6 +99,12 @@ abstract class TestCase extends Orchestra
             (new \CreateUsersTable())->up();
         }
 
+        if (!$app['db']->connection()->getSchemaBuilder()->hasTable('posts'))
+        {
+            include_once __DIR__.'/Models/create_posts_table.php';
+            (new \CreatePostsTable())->up();
+        }
+
         include_once __DIR__.'/../src/Migrations/migrations.php';
 
         (new \CreateUserPermissionsMigrations())->up();

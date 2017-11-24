@@ -20,8 +20,10 @@
     </filter>
 
     <php>
-        <env name="AMPLIFYPAY_MERCHANT_ID" value="SomeDummyStuff"/>
-        <env name="AMPLIFYPAY_API_KEY" value="SomeDummyKey"/>
-        <env name="PAYSTACK_SECRET_KEY" value="SecretKey"/>
+        <env name="DATABASE" value="permissions"/>
+        <env name="DB_USER" value=""/>
+        <env name="DB_PASS" value=""/>
+
+        <env name="APP_KEY" value="base64:L8lRK8Go1NWCvy03sjPInQb2pA74FXweFLX4N9MHP68="/>
     </php>
 </phpunit>

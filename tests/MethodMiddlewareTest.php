@@ -22,7 +22,9 @@ class MethodMiddlewareTest extends TestCase {
 
         Route::get('/index', 'PermissionsHandler\Tests\Controllers\TestController@index');
         Route::get('/checkAdminRole', 'PermissionsHandler\Tests\Controllers\TestController@checkAdminRole');
+        Route::get('/mustHasAllRoles', 'PermissionsHandler\Tests\Controllers\TestController@mustHasAllRoles');
         Route::get('/checkAdminPermission', 'PermissionsHandler\Tests\Controllers\TestController@checkAdminPermission');
+        Route::get('/mustHasAllPermissions', 'PermissionsHandler\Tests\Controllers\TestController@mustHasAllPermissions');
 
     }
 
@@ -43,12 +45,13 @@ class MethodMiddlewareTest extends TestCase {
         $response->assertSee('accessed');
     }
 
-
     /** @test */
-    public function a_user_must_has_admin_role_to_access_checkAdminRole_method()
+    public function a_user_must_has_all_assigned_roles()
     {
-        $this->actingAs($this->userModel); // has a user role 
-        $response = $this->get('/checkAdminRole');
+        // the user has only admin role
+        $this->adminModel->assignRole($this->adminRoleModel);
+        $this->actingAs($this->adminModel);
+        $response = $this->get('/mustHasAllRoles');
         $response->assertStatus(403);
     }
 
@@ -65,10 +68,12 @@ class MethodMiddlewareTest extends TestCase {
 
 
     /** @test */
-    public function a_user_must_has_adminPermission_permission_to_access_checkAdminPermission_method()
+    public function a_user_must_has_all_assigned_permissions()
     {
+        $this->userRoleModel->assignPermission($this->userPermissionModel);
+        $this->userModel->assignRole($this->userRoleModel);
         $this->actingAs($this->userModel);
-        $response = $this->get('/checkAdminPermission');
+        $response = $this->get('/mustHasAllPermissions');
         $response->assertStatus(403);
     }
 

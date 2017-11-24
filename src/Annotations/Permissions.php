@@ -12,31 +12,22 @@ class Permissions implements Checkable
 {
     public $permissions;
 
-    public function __construct(array $permissions)
-    {
-        $this->permissions = $permissions;
-    }
+    public $requireAll = false;
 
-    public function check($isAggressive)
+
+    public function check()
     {
-        $permissions = isset($this->permissions['value']) ? $this->permissions['value'] : $this->permissions;
+
         $user = auth()->user();
 
         if (!$user) {
             return false;
         }
 
-        $result = false;
-        foreach ($permissions as $permission) {
-            $hasPermission = $user->hasPermission($permission);
-            if ($isAggressive == true && $hasPermission == false) {
-                return false;
-            }
-            if ($hasPermission == true) {
-                $result = true;
-            }
-        }
-
-        return $result;
+        return $user->hasPermission($this->permissions, $this->requireAll);
     }
+
+    
+
+    
 }

@@ -39,11 +39,10 @@ class PermissionsHandler
             return true;
         }
         foreach ($annotations as $annotation) {
-            if (!$annotation->check($this->config['aggressiveMode'])) {
+            if (!$annotation->check()) {
                 return  false;
             }
         }
-
         return true;
     }
 

@@ -24,7 +24,8 @@ class RouteMiddleware
         if (PermissionsHandler::isExcludedRoute($request)) {
             return $next($request);
         }
-        
+
+        $user = auth()->user();
         $permissions = null;
         $roles = null;
         $canGo = false;
@@ -37,13 +38,19 @@ class RouteMiddleware
                 $roles = explode(';', $arr[1]);
             }
         }
-        if (is_array($permissions)) {
-            $canGo = with(new Permissions($permissions))->check(config('permissionsHandler.aggressiveMode'));
-        }
-        if (is_array($roles)) {
-            $canGo = with(new Roles($roles))->check(config('permissionsHandler.aggressiveMode'));
+
+        if (config('aggressiveMode') == true && empty($roles) && empty($permissions)) {
+            $canGo = false;
+        } elseif (config('aggressiveMode') == false && empty($roles) && empty($permissions)) {
+            $canGo = true;
         }
 
+        if ($user && is_array($permissions)) {
+            $canGo = $user->hasPermission($permissions);
+        }
+        if ($user && is_array($roles)) {
+            $canGo = $user->hasRole($roles);
+        }
         if (!$canGo) {
             $redirectTo = config('permissionsHandler.redirectUrl');
             if ($redirectTo) {

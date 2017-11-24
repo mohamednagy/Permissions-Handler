@@ -71,29 +71,42 @@ trait UserTrait
     /**
      * Check if the user has a role.
      *
-     * @param string $role
+     * @param string|array $role
      *
      * @return bool
      */
-    public function hasRole($role)
+    public function hasRole($roles, $requireAll = false)
     {
-        if (is_string($role)) {
-            return in_array($role, $this->cachedRoles());
-        } else {
-            return in_array($role->id, $this->cachedRoles());
+        if (!is_array($roles)) {
+            $roles = [$roles];
         }
+
+        $cachedRoles = $this->cachedRoles();
+        $result = array_intersect($roles, $cachedRoles);
+        if ($requireAll) {
+            return count($result) == count($roles);
+        }
+        return count($result) > 0;
     }
 
     /**
      * Check if the user has a permission.
      *
-     * @param string $permission
+     * @param string|array $permissions
      *
      * @return bool
      */
-    public function hasPermission($permission)
+    public function hasPermission($permissions, $requireAll = false)
     {
-        return in_array($permission, $this->cachedPermissions());
+        if (!is_array($permissions)){
+            $permissions = [$permissions];
+        }
+        $cachedPermissions = $this->cachedPermissions();
+        $result = array_intersect($permissions, $cachedPermissions);
+        if ($requireAll) {
+            return count($result) == count($permissions);
+        }
+        return count($result) > 0;
     }
 
     /**
@@ -125,13 +138,38 @@ trait UserTrait
     /**
      * remove a role from a user
      *
-     * @param \Illuminate\Database\Eloquent\Model $role
+     * @param \PermissionsHandler\Models\Role|array $role
      * @return void
      */
-    public function unAssignRole($role)
+    public function unAssignRole($roles)
     {
-        $this->roles()->detach($role->id);
+        if (!is_array($roles)) {
+            $roles = [$roles];
+        }
+        $userRoles = $this->cachedRoles();
+        foreach ($roles as $role) {
+            if (isset($userRoles[$role->id])) {
+                unset($userRoles[$role->id]);
+            }
+        }
+        $this->roles()->sync($userRoles);
+
         $this->clearCachedRoles();
+        $this->clearCachedPermissions();
+    }
+
+
+    /**
+     * Remove all assiged roles.
+     *
+     * @return void
+     */
+    public function unAssignAllRoles()
+    {
+        $this->roles()->sync([]);
+
+        $this->clearCachedRoles();
+        $this->clearCachedPermissions();
     }
 
     /**

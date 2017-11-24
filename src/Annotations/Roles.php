@@ -12,30 +12,16 @@ class Roles implements Checkable
 {
     public $roles;
 
-    public function __construct(array $roles)
-    {
-        $this->roles = $roles;
-    }
+    public $requireAll = false;
 
-    public function check($isAggressive)
+    public function check()
     {
-        $roles = isset($this->roles['value']) ? $this->roles['value'] : $this->roles;
         $user = auth()->user();
+        
         if (!$user) {
             return false;
         }
 
-        $result = false;
-        foreach ($roles as $role) {
-            $hasRole = $user->hasRole($role);
-            if ($isAggressive == true && $hasRole == false) {
-                return false;
-            }
-            if ($hasRole) {
-                $result = true;
-            }
-        }
-
-        return $result;
+        return $user->hasRole($this->roles, $this->requireAll);
     }
 }

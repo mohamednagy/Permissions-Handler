@@ -58,4 +58,19 @@ class RoleTest extends TestCase
             $this->assertCount(0, $roles[$this->userRoleModel->name]);
         }
     }
+
+    /** @test */
+    public function it_can_unassign_all_roles_from_a_user()
+    {
+        $this->userModel->unAssignAllRoles();
+        $this->assertCount(0, $this->userModel->roles);
+    }
+
+    /** @test */
+    public function it_can_unassign_roles_from_a_user()
+    {
+        $this->userModel->assignRole($this->userRoleModel);
+        $this->userModel->unAssignRole($this->userRoleModel);
+        $this->assertFalse($this->userModel->roles->contains('id', $this->userRoleModel->id));
+    }
 }

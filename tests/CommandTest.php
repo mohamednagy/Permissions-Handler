@@ -35,7 +35,7 @@ class CommandTest extends TestCase
     /** @test */
     public function it_can_assign_role_to_user()
     {
-        \Artisan::call('permissions:assign', ['--role' => parent::USER_ROLE, '--user-id' => 1]);
+        \Artisan::call('permissions:assign', ['--role' => parent::USER_ROLE, '--user-id' => $this->userModel->id]);
         $this->assertTrue($this->userModel->roles->contains('name', parent::USER_ROLE));
     }
 }

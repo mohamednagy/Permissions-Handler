@@ -56,9 +56,9 @@ abstract class TestCase extends Orchestra
             'driver' => 'mysql',
             'host' => '127.0.0.1',
             'port' => '3306',
-            'database' => 'permissions2',
-            'username' => 'root',
-            'password' => 'root',
+            'database' => env('DATABASE'),
+            'username' => env('DB_USER'),
+            'password' => env('DB_PASS'),
             'unix_socket' => '',
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
@@ -81,7 +81,7 @@ abstract class TestCase extends Orchestra
         ];
         $app['config']->set('permissionsHandler', $configs);
 
-        $app['config']->set('app.key', 'base64:L8lRK8Go1NWCvy03sjPInQb2pA74FXweFLX4N9MHP68=');
+        $app['config']->set('app.key', env('APP_KEY'));
         // Use test User model for users provider
         $app['config']->set('auth.providers.users.model', User::class);
         $app['log']->getMonolog()->pushHandler(new TestHandler());

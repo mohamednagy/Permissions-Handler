@@ -4,5 +4,5 @@ namespace PermissionsHandler\Annotations;
 
 interface Checkable
 {
-    public function check($isAggressive);
+    public function check();
 }

@@ -2,7 +2,9 @@
 
 namespace PermissionsHandler\Tests\Controllers;
 
+use PermissionsHandler\Roles;
 use Illuminate\Routing\Controller;
+use PermissionsHandler\Permissions;
 use PermissionsHandler\Middleware\MethodMiddleware;
 
 class TestController extends Controller
@@ -26,7 +28,7 @@ class TestController extends Controller
     /**
      * a user that has role `user` can access this method 
      * 
-     * @\PermissionsHandler\Roles({"admin"})
+     * @Roles({"admin"})
      * 
      * @return boolean
      */
@@ -35,14 +37,40 @@ class TestController extends Controller
         return 'accessed';
     }
 
+
+    /**
+     * a user must has all assigned roles
+     *
+     * @Roles({"admin", "notExistingRole"}, requireAll=true)
+     * 
+     * @return void
+     */
+    public function mustHasAllRoles()
+    {
+        return 'accessed';
+    }
+
     /**
      * a user with permissoin adminPermission can access this method
      *
-     * @\PermissionsHandler\Permissions({"adminPermission"})
+     * @Permissions({"adminPermission", "notExistsPermission"})
      * 
      * @return void
      */
     public function checkAdminPermission()
+    {
+        return 'accessed';
+    }
+
+
+    /**
+     * a user must has all assigned Permissions
+     *
+     * @Permissions({"userPermission", "notExistingPermission"}, requireAll=true)
+     * 
+     * @return void
+     */
+    public function mustHasAllPermissions()
     {
         return 'accessed';
     }

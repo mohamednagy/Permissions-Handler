@@ -24,6 +24,7 @@ class RouteMiddlewareTest extends TestCase
         $this->request = Request::create('/', 'GET');
 
     }
+
     /** @test */
     public function a_guest_cannot_access_a_route_protected_by_the_route_middleware()
     {
@@ -34,7 +35,7 @@ class RouteMiddlewareTest extends TestCase
                 function () { 
                     return new Response();
                 },
-                'permissions@userPermissions', 'role@admin'
+                'permissions@userPermissions', 'roles@admin'
             );
         }
         catch(\Exception $e){
@@ -45,10 +46,10 @@ class RouteMiddlewareTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_access_a_route_protected_by_route_middleware_if_have_this_role()
+    public function a_user_can_access_a_route_protected_by_route_middleware_if_has_this_role()
     {
         $this->adminModel->assignRole($this->adminRoleModel);
-        auth()->login($this->adminModel);
+        $this->actingAs($this->adminModel);
         
         $status_code = null;
         try{
@@ -70,7 +71,7 @@ class RouteMiddlewareTest extends TestCase
     public function a_user_can_not_access_a_route_protected_by_route_middleware_if_have_not_this_role()
     {
         $this->adminModel->assignRole($this->adminRoleModel);
-        auth()->login($this->adminModel);
+        $this->actingAs($this->adminModel);
         $status_code = null;
         try{
             $response = $this->routeMiddleware->handle(
@@ -91,9 +92,9 @@ class RouteMiddlewareTest extends TestCase
     /** @test */
     public function a_user_can_access_a_route_protected_by_route_middleware_if_has_this_permission()
     {
-        $this->userModel->assignRole($this->userRoleModel);
-        $this->userRoleModel->assignPermission($this->userPermissionModel);
-        auth()->login($this->userModel);
+        $this->adminModel->assignRole($this->adminRoleModel);
+        $this->adminRoleModel->assignPermission($this->adminPermissionModel);
+        $this->actingAs($this->adminModel);
         $status_code = null;
         try{
             $response = $this->routeMiddleware->handle(
@@ -101,7 +102,7 @@ class RouteMiddlewareTest extends TestCase
                 function () { 
                     return new Response();
                 },
-                'permissions@userPermission'
+                'permissions@adminPermission'
             );
         }
         catch(\Exception $e){
@@ -116,7 +117,7 @@ class RouteMiddlewareTest extends TestCase
     {
         $this->userModel->assignRole($this->userRoleModel);
         $this->userRoleModel->assignPermission($this->userPermissionModel);
-        auth()->login($this->userModel);
+        $this->actingAs($this->userModel);
         $status_code = null;
         try{
             $response = $this->routeMiddleware->handle(

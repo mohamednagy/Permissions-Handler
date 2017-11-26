@@ -34,6 +34,10 @@
             }
         }
     },
+    "post-package-install":[
+        "php artisan vendor:publish --tag=PermissionsHandler",
+        "php artisan migrate"
+    ],
     "minimum-stability" : "dev",
     "prefer-stable" : true
 }

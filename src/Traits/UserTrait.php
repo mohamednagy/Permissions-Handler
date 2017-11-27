@@ -116,7 +116,7 @@ trait UserTrait
      *
      * @return bool
      */
-    public function canDo($permission)
+    public function can($permission)
     {
         return in_array($permission, $this->cachedPermissions());
     }

@@ -1,10 +1,10 @@
 <?php
 /**
- * @canDo
+ * @can
  *
  * @param string $permission
  */
-Blade::if('canDo', function ($permission) {
+Blade::if('can', function ($permission) {
     $user = auth()->user();
     if (!$user) {
         return false;
@@ -18,13 +18,13 @@ Blade::if('canDo', function ($permission) {
  *
  * @param $permission
  */
-Blade::if('hasPermission', function ($permission) {
+Blade::if('permission', function ($permissions, $requireAll = false) {
     $user = auth()->user();
     if (!$user) {
         return false;
     }
 
-    return $user->hasPermission($permission);
+    return $user->hasPermission($permissions, $requireAll);
 });
 
 /*
@@ -32,11 +32,11 @@ Blade::if('hasPermission', function ($permission) {
  *
  * @param string $role
  */
-Blade::if('hasRole', function ($role) {
+Blade::if('role', function ($roles, $requireAll = false) {
     $user = auth()->user();
     if (!$user) {
         return false;
     }
 
-    return $user->hasRole($role);
+    return $user->hasRole($role, $requireAll);
 });

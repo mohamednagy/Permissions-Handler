@@ -55,7 +55,13 @@ class PermissionsHandler
      */
     public function isExcludedRoute($request)
     {
-        return in_array($request->path(), $this->config['excludedRoutes']);
+        foreach($this->config['excludedRoutes'] as $route){
+            if ($request->is($route)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

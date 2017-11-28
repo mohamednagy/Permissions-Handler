@@ -214,12 +214,11 @@ trait UserTrait
     public function owns($relation, $parameter, $key = null)
     {
         $request = app(\Illuminate\Http\Request::class);
-        
-        if ($this->key == null) {
-            $this->key = $this->parameter;
+        if ($key == null) {
+            $key = $parameter;
         }
-
-        $result = $user->{$this->relation}->contains($this->key, $request->{$this->parameter});
+        
+        $result = $this->{$relation}->contains($key, $request->{$parameter});
         
         return $result;
     }

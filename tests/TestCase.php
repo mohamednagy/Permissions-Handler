@@ -95,13 +95,13 @@ abstract class TestCase extends Orchestra
     {
         if (!$app['db']->connection()->getSchemaBuilder()->hasTable('users'))
         {
-            include_once __DIR__.'/Models/create_users_table.php';
+            include_once __DIR__.'/Migrations/create_users_table.php';
             (new \CreateUsersTable())->up();
         }
 
         if (!$app['db']->connection()->getSchemaBuilder()->hasTable('posts'))
         {
-            include_once __DIR__.'/Models/create_posts_table.php';
+            include_once __DIR__.'/Migrations/create_posts_table.php';
             (new \CreatePostsTable())->up();
         }
 

@@ -37,7 +37,7 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        /*        $this->mergeConfigFrom(__DIR__.'/config/permissionsHandler.php', 'permissionsHandler');*/
+        $this->mergeConfigFrom(__DIR__.'/Config/permissionsHandler.php', 'permissionsHandler');
 
         $this->app->bind('permissionsHandler', function () {
             return new PermissionsHandler();

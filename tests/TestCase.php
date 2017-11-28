@@ -75,7 +75,7 @@ abstract class TestCase extends Orchestra
             'user' => User::class,
             'redirectUrl' => null,
             'aggressiveMode' => false,
-            'excludedRoutes' => ['login', 'register'],
+            'excludedRoutes' => ['login', 'register' , 'home/*'],
             'cacheExpiration' => 60,
             'seeder' => true
         ];

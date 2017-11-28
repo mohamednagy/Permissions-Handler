@@ -88,5 +88,18 @@ class TestController extends Controller
         return 'accessed';
     }
 
+
+    /**
+     * This is an exluded route, should be passed even annotations are found
+     * 
+     * @Roles({"admin})
+     *
+     * @return void
+     */
+    public function excludedRoute()
+    {
+        return 'accessed';
+    }
+
 }
 

@@ -27,7 +27,14 @@ class MethodMiddlewareTest extends TestCase {
         Route::get('/checkAdminPermission', 'PermissionsHandler\Tests\Controllers\TestController@checkAdminPermission');
         Route::get('/mustHasAllPermissions', 'PermissionsHandler\Tests\Controllers\TestController@mustHasAllPermissions');
         Route::get('/ownPost/{id}', 'PermissionsHandler\Tests\Controllers\TestController@ownPost');
+        Route::get('/home/exluded-route', 'PermissionsHandler\Tests\Controllers\TestController@excludedRoute');
+    }
 
+    /** @test */
+    public function excluded_route_should_pass()
+    {
+        $response = $this->get('home/exluded-route');
+        $response->assertSee('accessed');
     }
 
     /** @test */

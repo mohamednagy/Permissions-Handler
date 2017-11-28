@@ -12,7 +12,7 @@ class Owns implements Checkable
 {
     public $relation;
 
-    public $attribute;
+    public $parameter;
 
     public $key;
 
@@ -25,14 +25,6 @@ class Owns implements Checkable
             return false;
         }
         
-        $request = app(\Illuminate\Http\Request::class);
-
-        if ($this->key == null) {
-            $this->key = $this->attribute;
-        }
-
-        $result = $user->{$this->relation}->contains($this->key, $request->{$this->attribute});
-        
-        return $result;
+        return $user->owns($this->relation, $this->parameter, $this->key);
     }
 }

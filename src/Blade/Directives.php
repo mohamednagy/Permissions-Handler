@@ -1,10 +1,10 @@
 <?php
 /**
- * @can
+ * @canDo
  *
  * @param string $permission
  */
-Blade::if('can', function ($permission) {
+Blade::if('canDo', function ($permission) {
     $user = auth()->user();
     if (!$user) {
         return false;

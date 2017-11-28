@@ -116,7 +116,7 @@ trait UserTrait
      *
      * @return bool
      */
-    public function can($permission)
+    public function canDo($permission)
     {
         return in_array($permission, $this->cachedPermissions());
     }
@@ -200,5 +200,27 @@ trait UserTrait
     public function getCachePrefix()
     {
         return $this->getTable().'_'.$this->id;
+    }
+
+    /**
+     * If the user owns a specific resource 
+     * 
+     * @param string $realtion
+     * @param string $parameter
+     * @param string $key
+     * 
+     * @return boolean
+     */
+    public function owns($relation, $parameter, $key = null)
+    {
+        $request = app(\Illuminate\Http\Request::class);
+        
+        if ($this->key == null) {
+            $this->key = $this->parameter;
+        }
+
+        $result = $user->{$this->relation}->contains($this->key, $request->{$this->parameter});
+        
+        return $result;
     }
 }

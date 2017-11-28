@@ -8,7 +8,7 @@ use Illuminate\Routing\Controller;
 use PermissionsHandler\Permissions;
 use PermissionsHandler\Middleware\MethodMiddleware;
 
-class TestController extends Controller
+class MethodTestController extends Controller
 {
 
     public function __construct()
@@ -79,7 +79,7 @@ class TestController extends Controller
     /**
      * a use must owns the post to be all to access
      * 
-     * @Owns(relation="posts", attribute="id")
+     * @Owns(relation="posts", parameter="id")
      *
      * @return void
      */

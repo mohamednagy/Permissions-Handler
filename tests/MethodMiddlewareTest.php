@@ -6,7 +6,7 @@ namespace PermissionsHandler\Tests;
 use PermissionsHandler;
 use Illuminate\Support\Facades\Route;
 use PermissionsHandler\Middleware\MethodMiddleware;
-use PermissionsHandler\Tests\Controllers\TestController;
+use PermissionsHandler\Tests\Controllers\MethodTestController;
 use PermissionsHandler\Tests\Models\Post;
 
 
@@ -21,13 +21,13 @@ class MethodMiddlewareTest extends TestCase {
     {
         parent::setUp();
 
-        Route::get('/index', 'PermissionsHandler\Tests\Controllers\TestController@index');
-        Route::get('/checkAdminRole', 'PermissionsHandler\Tests\Controllers\TestController@checkAdminRole');
-        Route::get('/mustHasAllRoles', 'PermissionsHandler\Tests\Controllers\TestController@mustHasAllRoles');
-        Route::get('/checkAdminPermission', 'PermissionsHandler\Tests\Controllers\TestController@checkAdminPermission');
-        Route::get('/mustHasAllPermissions', 'PermissionsHandler\Tests\Controllers\TestController@mustHasAllPermissions');
-        Route::get('/ownPost/{id}', 'PermissionsHandler\Tests\Controllers\TestController@ownPost');
-        Route::get('/home/exluded-route', 'PermissionsHandler\Tests\Controllers\TestController@excludedRoute');
+        Route::get('/index', 'PermissionsHandler\Tests\Controllers\MethodTestController@index');
+        Route::get('/checkAdminRole', 'PermissionsHandler\Tests\Controllers\MethodTestController@checkAdminRole');
+        Route::get('/mustHasAllRoles', 'PermissionsHandler\Tests\Controllers\MethodTestController@mustHasAllRoles');
+        Route::get('/checkAdminPermission', 'PermissionsHandler\Tests\Controllers\MethodTestController@checkAdminPermission');
+        Route::get('/mustHasAllPermissions', 'PermissionsHandler\Tests\Controllers\MethodTestController@mustHasAllPermissions');
+        Route::get('/ownPost/{id}', 'PermissionsHandler\Tests\Controllers\MethodTestController@ownPost');
+        Route::get('/home/exluded-route', 'PermissionsHandler\Tests\Controllers\MethodTestController@excludedRoute');
     }
 
     /** @test */

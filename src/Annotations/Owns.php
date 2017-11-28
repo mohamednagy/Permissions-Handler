@@ -20,11 +20,10 @@ class Owns implements Checkable
     public function check()
     {
         $user = auth()->user();
-        
         if (!$user) {
             return false;
         }
-        
+
         return $user->owns($this->relation, $this->parameter, $this->key);
     }
 }

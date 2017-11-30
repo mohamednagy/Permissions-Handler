@@ -8,6 +8,11 @@ return [
   'user' => \App\User::class,
 
   /*
+  * Table that will affected by roles which permissionsHandler will play with
+  */
+  'table' => 'users',
+
+  /*
    * redirect url in case of the user doesn't authorized to do action
    */
   'redirectUrl' => null,

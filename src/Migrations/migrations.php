@@ -10,8 +10,32 @@ class CreateUserPermissionsMigrations extends Migration
      *
      * @return void
      */
+    private $actorsTable;
+    private $actor;
+
+    public function __construct()
+    {
+        $config = config('permissionsHandler');
+        if(key_exists('table',$config)){
+            $this->actorsTable = $config['table'];
+        }
+        $this->actor=substr($this->actorsTable,0,-1);
+    }
+
     public function up()
     {
+
+        if(!Schema::hasTable($this->actorsTable)){
+            Schema::create($this->actorsTable, function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name');
+                $table->string('email')->unique();
+                $table->string('password');
+                $table->rememberToken();
+                $table->timestamps();
+            });
+        }
+
         if (!Schema::hasTable('roles')) {
             Schema::create('roles', function (Blueprint $table) {
                 $table->increments('id');
@@ -20,13 +44,13 @@ class CreateUserPermissionsMigrations extends Migration
             });
         }
 
-        if (!Schema::hasTable('role_user')) {
-            Schema::create('role_user', function (Blueprint $table) {
+        if (!Schema::hasTable('role_'.$this->actor)) {
+            Schema::create('role_'.$this->actor, function (Blueprint $table) {
                 $table->increments('id');
                 $table->integer('role_id')->unsigned()->index();
                 $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
-                $table->integer('user_id')->unsigned()->index();
-                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+                $table->integer($this->actor.'_id')->unsigned()->index();
+                $table->foreign($this->actor.'_id')->references('id')->on($this->actorsTable)->onDelete('cascade');
                 $table->timestamps();
             });
         }
@@ -58,6 +82,7 @@ class CreateUserPermissionsMigrations extends Migration
      */
     public function down()
     {
+
         if (Schema::hasTable('role_user')) {
             Schema::drop('role_user');
         }
@@ -69,6 +94,9 @@ class CreateUserPermissionsMigrations extends Migration
         }
         if (Schema::hasTable('permissions')) {
             Schema::drop('permissions');
+        }
+        if (Schema::hasTable($this->actorsTable)) {
+            Schema::drop($this->actorsTable);
         }
     }
 }

@@ -51,20 +51,11 @@ abstract class TestCase extends Orchestra
      */
     protected function getEnvironmentSetUp($app)
     {
-        $app['config']->set('database.default', 'mysql');
-        $app['config']->set('database.connections.mysql', [
-            'driver' => 'mysql',
-            'host' => '127.0.0.1',
-            'port' => '3306',
-            'database' => env('DATABASE'),
-            'username' => env('DB_USER'),
-            'password' => env('DB_PASS'),
-            'unix_socket' => '',
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'strict' => true,
-            'engine' => null,
+        $app['config']->set('database.default', 'sqlite');
+        $app['config']->set('database.connections.sqlite', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+            'prefix'   => '',
         ]);
 
         $app['config']->set('filesystems.default', 'local');
@@ -73,6 +64,7 @@ abstract class TestCase extends Orchestra
 
         $configs = [
             'user' => User::class,
+            'table' => 'users',
             'redirectUrl' => null,
             'aggressiveMode' => false,
             'excludedRoutes' => ['login', 'register' , 'home/*'],

@@ -61,7 +61,7 @@ abstract class TestCase extends Orchestra
         $app['config']->set('filesystems.disks.permissions.root', base_path().'/database/seeds/permissions-handler');
 
         $configs = [
-            'tables' => ['roles' => 'roles', 'permissinos' => 'permissions', 'role_user' => 'role_user', 'permission_role' => 'permission_role'],
+            'tables' => ['roles' => 'roles', 'permissions' => 'permissions', 'role_user' => 'role_user', 'permission_role' => 'permission_role'],
             'redirectUrl' => null,
             'aggressiveMode' => false,
             'excludedRoutes' => ['login', 'register' , 'home/*'],
@@ -72,7 +72,17 @@ abstract class TestCase extends Orchestra
 
         $app['config']->set('app.key', env('APP_KEY'));
         // Use test User model for users provider
-        $app['config']->set('auth.providers.users.model', User::class);
+        $providers = [
+            'users' => [
+                'driver' => 'eloquent',
+                'model' => User::class,
+            ],
+            'admins' => [
+                'driver' => 'eloquent',
+                'model' => Admin::class,
+            ]
+        ];
+        $app['config']->set('auth.providers', $providers);
         $app['log']->getMonolog()->pushHandler(new TestHandler());
     }
     /**

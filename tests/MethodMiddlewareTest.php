@@ -16,13 +16,15 @@ class MethodMiddlewareTest extends TestCase
     {
         parent::setUp();
 
-        Route::get('/index', 'PermissionsHandler\Tests\Controllers\MethodTestController@index');
-        Route::get('/checkAdminRole', 'PermissionsHandler\Tests\Controllers\MethodTestController@checkAdminRole');
-        Route::get('/mustHasAllRoles', 'PermissionsHandler\Tests\Controllers\MethodTestController@mustHasAllRoles');
-        Route::get('/checkAdminPermission', 'PermissionsHandler\Tests\Controllers\MethodTestController@checkAdminPermission');
-        Route::get('/mustHasAllPermissions', 'PermissionsHandler\Tests\Controllers\MethodTestController@mustHasAllPermissions');
-        Route::get('/ownPost/{id}', 'PermissionsHandler\Tests\Controllers\MethodTestController@ownPost');
-        Route::get('/home/exluded-route', 'PermissionsHandler\Tests\Controllers\MethodTestController@excludedRoute');
+        Route::group(['namespace' => 'PermissionsHandler\Tests\Controllers'], function () {
+            Route::get('/index', 'MethodTestController@index');
+            Route::get('/checkAdminRole', 'MethodTestController@checkAdminRole');
+            Route::get('/mustHasAllRoles', 'MethodTestController@mustHasAllRoles');
+            Route::get('/checkAdminPermission', 'MethodTestController@checkAdminPermission');
+            Route::get('/mustHasAllPermissions', 'MethodTestController@mustHasAllPermissions');
+            Route::get('/ownPost/{id}', 'MethodTestController@ownPost');
+            Route::get('/home/exluded-route', 'MethodTestController@excludedRoute');
+        });
     }
 
     /** @test */

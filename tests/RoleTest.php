@@ -28,6 +28,7 @@ class RoleTest extends TestCase
     /** @test */
     public function it_has_permission()
     {
+        $this->userRoleModel->assignPermission($this->userPermissionModel);
         $this->assertTrue($this->userRoleModel->hasPermission($this->userPermissionModel));
     }
 
@@ -35,7 +36,7 @@ class RoleTest extends TestCase
     public function it_can_unassign_permission()
     {
         $this->userRoleModel->assignPermission($this->userPermissionModel);
-        $this->userRoleModel->unAssignPermission($this->userPermissionModel);
+        $this->userRoleModel->revokePermission($this->userPermissionModel);
         $this->assertTrue($this->userRoleModel->permissions->contains('id', $this->userPermissionModel->id));
 
         if (config('permissionsHandler.seeder') == true) {
@@ -47,7 +48,7 @@ class RoleTest extends TestCase
     /** @test */
     public function it_can_unassign_all_permissins()
     {
-        $this->userRoleModel->unAssignAllPermissions();
+        $this->userRoleModel->revokeAllPermissions();
         $this->assertCount(0, $this->userRoleModel->permissions);
 
         if (config('permissionsHandler.seeder') == true) {
@@ -57,17 +58,23 @@ class RoleTest extends TestCase
     }
 
     /** @test */
-    public function it_can_unassign_all_roles_from_a_user()
+    public function it_can_assign_role_to_a_user()
     {
-        $this->userModel->unAssignAllRoles();
-        $this->assertCount(0, $this->userModel->roles);
+        $this->userModel->assignRole([$this->userRoleModel, $this->adminRoleModel]);
+        $this->assertTrue($this->userModel->roles->contains('id', $this->userRoleModel->id));
     }
 
     /** @test */
     public function it_can_unassign_roles_from_a_user()
     {
-        $this->userModel->assignRole($this->userRoleModel);
-        $this->userModel->unAssignRole($this->userRoleModel);
+        $this->userModel->revokeRole($this->userRoleModel);
         $this->assertFalse($this->userModel->roles->contains('id', $this->userRoleModel->id));
+    }
+
+    /** @test */
+    public function it_can_unassign_all_roles_from_a_user()
+    {
+        $this->userModel->revokeAllRoles();
+        $this->assertCount(0, $this->userModel->roles);
     }
 }

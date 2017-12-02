@@ -167,19 +167,27 @@ trait UserTrait
      * @param \PermissionsHandler\Models\Role|array $role
      * @return void
      */
-    public function unAssignRole($roles)
+    public function revokeRole(...$roles)
     {
-        if (! is_array($roles)) {
-            $roles = [$roles];
-        }
+        $roles = collect($roles)
+                    ->flatten()
+                    ->map(function($role){
+                        if (is_string($role)) {
+                            $role = Role::getByName($role);
+                        }
+                        return $role;
+                    })
+                    ->pluck('name', 'id');
+
         $userRoles = $this->cachedRoles();
-        foreach ($roles as $role) {
-            if (isset($userRoles[$role->id])) {
-                unset($userRoles[$role->id]);
+        foreach ($roles as $id => $role) {
+            if (in_array($role, $userRoles)) {
+                unset($userRoles[$id]);
             }
         }
-        $this->roles()->sync($userRoles);
 
+        $this->roles()->sync($userRoles);
+        
         $this->clearCachedRoles();
         $this->clearCachedPermissions();
     }
@@ -189,7 +197,7 @@ trait UserTrait
      *
      * @return void
      */
-    public function unAssignAllRoles()
+    public function revokeAllRoles()
     {
         $this->roles()->sync([]);
 

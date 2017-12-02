@@ -2,10 +2,11 @@
 
 namespace PermissionsHandler\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use PermissionsHandler\Seeder\Seeder;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\Model;
 use PermissionsHandler\Exceptions\PermissionNotFound;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Permission extends Model
 {

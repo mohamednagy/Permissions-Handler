@@ -3,6 +3,8 @@
 namespace PermissionsHandler\Traits;
 
 use PermissionsHandler\Seeder\Seeder;
+use Illuminate\Support\Facades\Cache;
+use PermissionsHandler\Models\Permission;
 
 trait RoleTrait
 {
@@ -19,16 +21,27 @@ trait RoleTrait
         parent::delete();
     }
 
-    public function hasPermission($permission)
+    public function hasPermission($permissions, $requireAll = false)
     {
-        $hasPermission = false;
-        if (is_string($permission)) {
-            $hasPermission = $this->permissions->contains('name', $permission);
-        } elseif (is_object($permission)) {
-            $hasPermission = $this->permissions->contains('id', $permission->id);
+        if (! is_array($permissions)) {
+            $permissions = [$permissions];
+        }
+        $permissions = collect($permissions)
+                        ->flatten()
+                        ->map(function($permission){
+                            if (is_string($permission)) {
+                                $permission = Permission::getByName($permission);
+                            }
+                            return $permission;
+                        })
+                        ->pluck('name', 'id')->toArray();
+        $cachedPermissions = $this->cachedPermissions()->pluck('name', 'id')->toArray();
+        $result = array_intersect($permissions, $cachedPermissions);
+        if ($requireAll) {
+            return count($result) == count($permissions);
         }
 
-        return $hasPermission;
+        return count($result) > 0;
     }
 
     /**
@@ -37,19 +50,18 @@ trait RoleTrait
      * @param Illuminate\Database\Eloquent\Collection|Model|array $permissions
      * @return void
      */
-    public function assignPermission($permissions)
+    public function assignPermission(...$permissions)
     {
-        if (! is_array($permissions)) {
-            $permissions = [$permissions];
-        }
-        $rolePermissions = $this->permissions->pluck('id')->toArray();
-        foreach ($permissions as $permission) {
-            if (in_array($permission->id, $rolePermissions)) {
-                continue;
-            }
-            $rolePermissions[] = $permission->id;
-        }
-        $this->permissions()->sync($rolePermissions);
+        $permissions = collect($permissions)
+                        ->flatten()
+                        ->map(function($permission){
+                            if(is_string($permission)){
+                                $permission = Permission::getByName($permission);
+                            }
+                            return $permission;
+                        });
+                        
+        $this->permissions()->saveMany($permissions);
 
         if (config('permissionsHandler.seeder') == true) {
             Seeder::assignPermissionsToRole($this, $permissions);
@@ -63,12 +75,12 @@ trait RoleTrait
      *
      * @return void
      */
-    public function unAssignAllPermissions()
+    public function revokeAllPermissions()
     {
         $this->permissions()->sync([]);
 
         if (config('permissionsHandler.seeder') == true) {
-            Seeder::unAssignAllRolePermissions($this);
+            Seeder::revokeAllRolePermissions($this);
         }
 
         $this->clearRelatedCache();
@@ -80,24 +92,49 @@ trait RoleTrait
      * @param Illuminate\Database\Eloquent\Collection|Model|array $permissions
      * @return void
      */
-    public function unAssignPermission($permissions)
+    public function revokePermission(...$permissions)
     {
-        if (! is_array($permissions)) {
-            $permissions = [$permissions];
-        }
-        $rolePermissions = $this->permissions->pluck('id')->toArray();
-        foreach ($permissions as $permission) {
-            if (($key = array_search($permission->id, $rolePermissions)) !== false) {
-                unset($rolePermissions[$key]);
+        $permissions = collect($permissions)
+                        ->flatten()
+                        ->map(function($permission){
+                            if (is_string($permission)) {
+                                $permission = Permission::getByName($permission);
+                            }
+                            return $permission;
+                        })
+                        ->pluck('name', 'id')->toArray();
+
+        $cachedPermissions = $this->cachedPermissions()->pluck('name', 'id')->toArray();
+        foreach ($permissions as $id => $permission) {
+            if (in_array($permission, $cachedPermissions)) {
+                unset($cachedPermissions[$id]);
             }
         }
-        $this->permissions()->sync($rolePermissions);
+
+        $this->permissions()->sync($cachedPermissions);
 
         if (config('permissionsHandler.seeder') == true) {
-            Seeder::unAssignRolePermissions($this, $permissions);
+            Seeder::revokeRolePermissions($this, $permissions);
         }
 
         $this->clearRelatedCache();
+    }
+
+
+    /**
+     * Get the cached permissions for specific role
+     *
+     * @return Collection
+     */
+    public function cachedPermissions()
+    {
+        return Cache::remember(
+            $this->getCachePrefix(),
+            config('permissionsHandler.cacheExpiration'),
+            function() {
+                return $this->permissions;
+            }
+        );
     }
 
     /**
@@ -127,10 +164,17 @@ trait RoleTrait
      */
     public function clearRelatedCache()
     {
+        Cache::forget($this->getCachePrefix());
         $users = $this->getRelatedUsers();
         foreach ($users as $user) {
             $user->clearCachedRoles();
             $user->clearCachedPermissions();
         }
+    }
+
+
+    public function getCachePrefix()
+    {
+        return 'permissionsHandler.roles.'.$this->id.'permissions';
     }
 }

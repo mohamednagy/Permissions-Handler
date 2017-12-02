@@ -27,19 +27,19 @@ class MethodMiddlewareTest extends TestCase
         });
     }
 
-    // /** @test */
-    // public function excluded_route_should_pass()
-    // {
-    //     $response = $this->get('home/exluded-route');
-    //     $response->assertSee('accessed');
-    // }
+    /** @test */
+    public function excluded_route_should_pass()
+    {
+        $response = $this->get('home/exluded-route');
+        $response->assertSee('accessed');
+    }
 
-    // /** @test */
-    // public function a_guest_user_can_access_controller_method_that_doesnot_has_roles_or_permissions_assigned()
-    // {
-    //     $response = $this->get('/index');
-    //     $response->assertSee('accessed');
-    // }
+    /** @test */
+    public function a_guest_user_can_access_controller_method_that_doesnot_has_roles_or_permissions_assigned()
+    {
+        $response = $this->get('/index');
+        $response->assertSee('accessed');
+    }
 
     /** @test */
     public function a_user_with_user_role_can_access_a_controller_method_if_has_user_role()

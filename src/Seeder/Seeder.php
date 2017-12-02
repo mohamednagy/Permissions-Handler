@@ -70,7 +70,7 @@ class Seeder
      * @param PermissionsHandler\Models\Role $role
      * @return void
      */
-    public static function unAssignAllRolePermissions($role)
+    public static function revokeAllRolePermissions($role)
     {
         $all = self::getFileContent('role-permissions.json');
         if (isset($all[$role->name])) {
@@ -86,16 +86,10 @@ class Seeder
      * @param \Illuminate\Support\Collection|array $permissions
      * @return void
      */
-    public static function unAssignRolePermissions($role, $permissions)
+    public static function revokeRolePermissions($role, $permissions)
     {
-        if (! $permissions instanceof \Illuminate\Support\Collection) {
-            $permissions = is_array($permissions) ? collect($permissions) : collect([$permissions]);
-        }
-
-        $permissions = $permissions->pluck('name')->toArray();
         $rolePermissions = $role->permissions->pluck('name')->toArray();
         $result = array_diff($rolePermissions, $permissions);
-
         $all = self::getFileContent('role-permissions');
         $all[$role->name] = $result;
 

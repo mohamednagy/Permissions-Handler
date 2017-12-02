@@ -14,7 +14,7 @@ class AssignCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'permissions:assign {--role=} {--user-id=} {--permission=}';
+    protected $signature = 'permissions:assign {--role=} {--user-id=} {--permission=} {--guard=}';
 
     /**
      * The console command description.
@@ -43,6 +43,7 @@ class AssignCommand extends Command
         $userId = $this->option('user-id');
         $roleName = $this->option('role');
         $permissionName = $this->option('permission');
+        $guard = $this->option('guard');
 
         if (! $userId && ! $roleName && ! $permissionName) {
             $this->error('missing parameters!');
@@ -62,7 +63,10 @@ class AssignCommand extends Command
 
         $user = null;
         if ($userId) {
-            $user = PermissionsHandler::user($userId);
+            $guard = $guard ?: config('auth.defaults.guard');
+            $provider = config('auth.guards.'.$guard.'.provider');
+            $user = config('auth.providers.'.$provider.'.model');
+            $user = $user::find($userId);
         }
 
         if ($role && $permission) {

@@ -101,13 +101,33 @@ trait RoleTrait
     }
 
     /**
+     * Get role related users.
+     * 
+     * @return array
+     */
+    public function getRelatedUsers()
+    {
+        $relatedUsers = \DB::table(config('permissionsHandler.tables.role_user'))
+                    ->select('role_id', 'model_id', 'model_type')
+                    ->where('role_id', $this->id)
+                    ->get();
+                    
+        $users = collect();
+        foreach($relatedUsers as $user){
+            $users->push(($user->model_type)::find($user->model_id));
+        }
+        
+        return $users;
+    }
+
+    /**
      * Clear all caches related to this role.
      *
      * @return void
      */
     public function clearRelatedCache()
     {
-        $users = $this->users;
+        $users = $this->getRelatedUsers();
         foreach ($users as $user) {
             $user->clearCachedRoles();
             $user->clearCachedPermissions();

@@ -13,13 +13,11 @@ class Permission extends Model
     {
         parent::__construct($attributes);
 
-        $this->setTable(config('permissionsHandler.table.permissions'));
+        $this->setTable(config('permissionsHandler.tables.permissions'));
     }
 
     /**
      * The "booting" method of the model.
-     *
-     * @return void
      */
     public static function boot()
     {
@@ -32,8 +30,8 @@ class Permission extends Model
 
     public function roles()
     {
-        $permissionsForeignKeyName = Inflector::singularize($this->tables['permissions']).'_id';
-        $rolesForeignKeyName = Inflector::singularize($this->tables['roles']).'_id';
+        $permissionsForeignKeyName = Inflector::singularize(config('permissionsHandler.tables.permissions')).'_id';
+        $rolesForeignKeyName = Inflector::singularize(config('permissionsHandler.tables.roles')).'_id';
 
         return $this->belongsToMany(
             \PermissionsHandler\Models\Permission::class,

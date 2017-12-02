@@ -50,7 +50,7 @@ class CreateUserPermissionsMigrations extends Migration
                 $table->primary([$foreignKeyName, 'model_id', 'model_type']);
             });
         }
-
+        
         if (! Schema::hasTable($this->tables['permissions'])) {
             Schema::create($this->tables['permissions'], function (Blueprint $table) {
                 $table->increments('id');

@@ -2,11 +2,12 @@
 
 namespace PermissionsHandler\Traits;
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use PermissionsHandler;
-use PermissionsHandler\Models\Permission;
+use Illuminate\Support\Facades\DB;
 use PermissionsHandler\Models\Role;
+use Illuminate\Support\Facades\Cache;
+use Doctrine\Common\Inflector\Inflector;
+use PermissionsHandler\Models\Permission;
 
 trait UserTrait
 {
@@ -15,12 +16,14 @@ trait UserTrait
      */
     public function roles()
     {
+        $rolesForeignKeyName = Inflector::singularize(config('permissionsHandler.tables.roles')).'_id';
+
         return $this->morphToMany(
             Role::class,
             'model',
             config('permissionsHandler.tables.role_user'),
             'model_id',
-            'role_id'
+            $rolesForeignKeyName
         );
     }
 
@@ -206,7 +209,7 @@ trait UserTrait
      */
     public function getCachePrefix()
     {
-        return $this->getTable().'_'.$this->id;
+        return 'permissionsHandler'.$this->getTable().'_'.$this->id;
     }
 
     /**

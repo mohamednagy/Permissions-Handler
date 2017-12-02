@@ -14,20 +14,14 @@ class Permissions implements Checkable
 
     public $requireAll = false;
 
-
     public function check()
     {
-
         $user = auth()->user();
 
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
         return $user->hasPermission($this->permissions, $this->requireAll);
     }
-
-    
-
-    
 }

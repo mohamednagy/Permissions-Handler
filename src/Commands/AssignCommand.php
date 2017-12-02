@@ -44,7 +44,7 @@ class AssignCommand extends Command
         $roleName = $this->option('role');
         $permissionName = $this->option('permission');
 
-        if (!$userId && !$roleName && !$permissionName) {
+        if (! $userId && ! $roleName && ! $permissionName) {
             $this->error('missing parameters!');
 
             return;

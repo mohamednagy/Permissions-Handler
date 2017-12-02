@@ -16,7 +16,8 @@
         }
     },
     "require": {
-        "doctrine/annotations" : "1.4.*"
+        "doctrine/annotations" : "1.4.*",
+        "doctrine/inflector": "^1.2"
     },
     "require-dev": {
         "monolog/monolog": "^1.22",

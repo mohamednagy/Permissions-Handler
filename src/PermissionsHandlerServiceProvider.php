@@ -6,7 +6,6 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\Application as LaravelApplication;
 
-
 class PermissionsHandlerServiceProvider extends ServiceProvider
 {
     /**
@@ -30,8 +29,8 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the application services.use PermissionsHandler\Commands;
-
+     * Register the application services.use PermissionsHandler\Commands;.
+     
      *
      * @return void
      */
@@ -44,27 +43,26 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
         });
 
         // register annotation
-        AnnotationRegistry::registerFile(__DIR__ . '/Annotations/Permissions.php');
-        AnnotationRegistry::registerFile(__DIR__ . '/Annotations/Roles.php');
-        AnnotationRegistry::registerFile(__DIR__ . '/Annotations/Owns.php');
+        AnnotationRegistry::registerFile(__DIR__.'/Annotations/Permissions.php');
+        AnnotationRegistry::registerFile(__DIR__.'/Annotations/Roles.php');
+        AnnotationRegistry::registerFile(__DIR__.'/Annotations/Owns.php');
     }
 
     protected function setupConfig()
     {
-
         if ($this->app instanceof LaravelApplication) {
-            require_once __DIR__ . '/Blade/Directives.php';
+            require_once __DIR__.'/Blade/Directives.php';
         }
 
-        $configPath = app()->basePath() . '/config/permissionsHandler.php';
-        $migrationsPath = app()->basePath() . '/database/migrations/'.date('Y_m_d_His') . '_create_user_permissions_migrations.php';
+        $configPath = app()->basePath().'/config/permissionsHandler.php';
+        $migrationsPath = app()->basePath().'/database/migrations/'.date('Y_m_d_His').'_create_user_permissions_migrations.php';
 
         $this->publishes([
-            __DIR__ . '/Migrations/migrations.php' => $migrationsPath,
-        ],'PermissionsHandler');
+            __DIR__.'/Migrations/migrations.php' => $migrationsPath,
+        ], 'PermissionsHandler');
 
         $this->publishes([
-            __DIR__ . '/Config/permissionsHandler.php' => $configPath
-        ],'PermissionsHandler');
+            __DIR__.'/Config/permissionsHandler.php' => $configPath,
+        ], 'PermissionsHandler');
     }
 }

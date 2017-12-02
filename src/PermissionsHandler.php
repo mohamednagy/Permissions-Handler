@@ -10,7 +10,6 @@ use Doctrine\Common\Annotations\FileCacheReader;
 
 class PermissionsHandler
 {
-
     protected $annotationReader;
     protected $config = [];
 
@@ -39,10 +38,11 @@ class PermissionsHandler
             return true;
         }
         foreach ($annotations as $annotation) {
-            if (!$annotation->check()) {
+            if (! $annotation->check()) {
                 return  false;
             }
         }
+
         return true;
     }
 
@@ -55,7 +55,7 @@ class PermissionsHandler
      */
     public function isExcludedRoute($request)
     {
-        foreach($this->config['excludedRoutes'] as $route){
+        foreach ($this->config['excludedRoutes'] as $route) {
             if ($request->is($route)) {
                 return true;
             }
@@ -82,7 +82,7 @@ class PermissionsHandler
             $reflectionMethod = new \ReflectionMethod($class, $method);
             $annotations = $this->annotationReader->getMethodAnnotations($reflectionMethod);
         }
-        
+
         return $annotations;
     }
 
@@ -97,7 +97,7 @@ class PermissionsHandler
     }
 
     /**
-     * Retrive permissions handler user
+     * Retrive permissions handler user.
      *
      * @param int $id
      * @return void
@@ -113,7 +113,7 @@ class PermissionsHandler
         if ($user) {
             return $user;
         }
-        
+
         return new $user();
     }
 }

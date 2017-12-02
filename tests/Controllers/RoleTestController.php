@@ -6,9 +6,8 @@ use Illuminate\Routing\Controller;
 
 class RoleTestController extends Controller
 {
-
     /**
-     * Undocumented function
+     * Undocumented function.
      *
      * @return void
      */
@@ -16,6 +15,4 @@ class RoleTestController extends Controller
     {
         return 'accessed';
     }
-
 }
-

@@ -2,15 +2,33 @@
 
 
 return [
-  /*
-   * user model which permissionsHandler will play with
-   */
-  'user' => \App\User::class,
 
   /*
-  * Table that will affected by roles which permissionsHandler will play with
+  * Permissions Handler tables
   */
-  'table' => 'users',
+  'tables' => [
+    /*
+     * roles table
+     */
+    'roles' => 'roles',
+
+    /*
+     * permissions table
+     */
+
+    'permissions' => 'permissions',
+
+    /*
+     * the many to many (or pivot table) relation between roles table and your users table
+     */
+    'role_user' => 'role_user',
+
+    /*
+     * the many to many (or pivot table) relation between permissions table and your roles table
+     */
+    'permission_role' => 'permission_role',
+
+  ],
 
   /*
    * redirect url in case of the user doesn't authorized to do action
@@ -38,7 +56,7 @@ return [
    */
   'cacheExpiration' => 60,
 
-  /**
+  /*
    * Allow to save the created permissions, roles and role-permission to files
    * to be seeded using artisan command
    */

@@ -5,11 +5,9 @@ namespace PermissionsHandler\Tests;
 use PermissionsHandler;
 use PermissionsHandler\Models\Role;
 use PermissionsHandler\Seeder\Seeder;
-use PermissionsHandler\Tests\Models\User;
 
 class RoleTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -32,7 +30,6 @@ class RoleTest extends TestCase
     {
         $this->assertTrue($this->userRoleModel->hasPermission($this->userPermissionModel));
     }
-
 
     /** @test */
     public function it_can_unassign_permission()

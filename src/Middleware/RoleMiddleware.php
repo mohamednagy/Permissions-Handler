@@ -4,11 +4,9 @@ namespace PermissionsHandler\Middleware;
 
 use Closure;
 use PermissionsHandler;
-use PermissionsHandler\Permissions;
 
 class RoleMiddleware
 {
-
     /**
      * Handle an incoming request.
      *
@@ -29,7 +27,7 @@ class RoleMiddleware
         $requireAll = (boolean) $requireAll;
         $canGo = $user->hasRole($roles, $requireAll);
 
-        if (!$canGo) {
+        if (! $canGo) {
             $redirectTo = config('permissionsHandler.redirectUrl');
             if ($redirectTo) {
                 return redirect($redirectTo);

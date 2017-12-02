@@ -2,7 +2,6 @@
 
 namespace PermissionsHandler\Commands;
 
-use PermissionsHandler;
 use Illuminate\Console\Command;
 use PermissionsHandler\Models\Role;
 use PermissionsHandler\Models\Permission;
@@ -43,7 +42,7 @@ class AddCommand extends Command
         $permissionName = $this->option('permission');
         $roleName = $this->option('role');
 
-        if (!$permissionName && !$roleName) {
+        if (! $permissionName && ! $roleName) {
             $this->error('permission or role is required');
 
             return;

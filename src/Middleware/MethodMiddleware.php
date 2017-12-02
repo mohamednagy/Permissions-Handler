@@ -7,7 +7,6 @@ use PermissionsHandler;
 
 class MethodMiddleware
 {
-
     /**
      * Handle an incoming request.
      *
@@ -21,8 +20,8 @@ class MethodMiddleware
         if (PermissionsHandler::isExcludedRoute($request)) {
             return $next($request);
         }
-        
-        if (!PermissionsHandler::canGo($request)) {
+
+        if (! PermissionsHandler::canGo($request)) {
             $redirectTo = config('permissionsHandler.redirectUrl');
             if ($redirectTo) {
                 return redirect($redirectTo);

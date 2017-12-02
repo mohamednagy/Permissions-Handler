@@ -15,11 +15,17 @@ trait UserTrait
      */
     public function roles()
     {
-        return $this->belongsToMany(\PermissionsHandler\Models\Role::class);
+        return $this->morphToMany(
+            Role::class,
+            'model',
+            config('permissionsHandler.tables.role_user'),
+            'model_id',
+            'role_id'
+        );
     }
 
     /**
-     * delete user
+     * delete user.
      *
      * @param array $options
      * @return void
@@ -77,7 +83,7 @@ trait UserTrait
      */
     public function hasRole($roles, $requireAll = false)
     {
-        if (!is_array($roles)) {
+        if (! is_array($roles)) {
             $roles = [$roles];
         }
 
@@ -86,6 +92,7 @@ trait UserTrait
         if ($requireAll) {
             return count($result) == count($roles);
         }
+
         return count($result) > 0;
     }
 
@@ -98,7 +105,7 @@ trait UserTrait
      */
     public function hasPermission($permissions, $requireAll = false)
     {
-        if (!is_array($permissions)){
+        if (! is_array($permissions)) {
             $permissions = [$permissions];
         }
         $cachedPermissions = $this->cachedPermissions();
@@ -106,6 +113,7 @@ trait UserTrait
         if ($requireAll) {
             return count($result) == count($permissions);
         }
+
         return count($result) > 0;
     }
 
@@ -122,28 +130,28 @@ trait UserTrait
     }
 
     /**
-     * assign role to user
+     * assign role to user.
      *
      * @param Illuminate\Database\Eloquent\Model $role
      * @return void
      */
     public function assignRole($role)
     {
-        if (!$this->roles->contains('id', $role->id)) {
+        if (! $this->roles->contains('id', $role->id)) {
             $this->roles()->attach($role->id);
             $this->clearCachedRoles();
         }
     }
 
     /**
-     * remove a role from a user
+     * remove a role from a user.
      *
      * @param \PermissionsHandler\Models\Role|array $role
      * @return void
      */
     public function unAssignRole($roles)
     {
-        if (!is_array($roles)) {
+        if (! is_array($roles)) {
             $roles = [$roles];
         }
         $userRoles = $this->cachedRoles();
@@ -157,7 +165,6 @@ trait UserTrait
         $this->clearCachedRoles();
         $this->clearCachedPermissions();
     }
-
 
     /**
      * Remove all assiged roles.
@@ -203,13 +210,13 @@ trait UserTrait
     }
 
     /**
-     * If the user owns a specific resource 
+     * If the user owns a specific resource.
      * 
      * @param string $realtion
      * @param string $parameter
      * @param string $key
      * 
-     * @return boolean
+     * @return bool
      */
     public function owns($relation, $parameter, $key = null)
     {
@@ -217,9 +224,9 @@ trait UserTrait
         if ($key == null) {
             $key = $parameter;
         }
-        
+
         $result = $this->{$relation}->contains($key, $request->{$parameter});
-        
+
         return $result;
     }
 }

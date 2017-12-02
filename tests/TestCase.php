@@ -4,7 +4,6 @@ namespace PermissionsHandler\Tests;
 
 use Monolog\Handler\TestHandler;
 use PermissionsHandler\Models\Role;
-use Illuminate\Database\Schema\Blueprint;
 use PermissionsHandler\Models\Permission;
 use PermissionsHandler\Tests\Models\User;
 use Orchestra\Testbench\TestCase as Orchestra;
@@ -26,7 +25,6 @@ abstract class TestCase extends Orchestra
 
     /** @var \PermissionsHandler\Models\Permission*/
     protected $adminPermission;
-
 
     const USER_ROLE = 'user';
     const ADMIN_ROLE = 'admin';
@@ -60,16 +58,15 @@ abstract class TestCase extends Orchestra
 
         $app['config']->set('filesystems.default', 'local');
         $app['config']->set('filesystems.disks.permissions.driver', 'local');
-        $app['config']->set('filesystems.disks.permissions.root', base_path() . '/database/seeds/permissions-handler');
+        $app['config']->set('filesystems.disks.permissions.root', base_path().'/database/seeds/permissions-handler');
 
         $configs = [
-            'user' => User::class,
-            'table' => 'users',
+            'tables' => ['roles' => 'roles', 'permissinos' => 'permissions', 'role_user' => 'role_user', 'permission_role' => 'permission_role'],
             'redirectUrl' => null,
             'aggressiveMode' => false,
             'excludedRoutes' => ['login', 'register' , 'home/*'],
             'cacheExpiration' => 60,
-            'seeder' => true
+            'seeder' => true,
         ];
         $app['config']->set('permissionsHandler', $configs);
 
@@ -85,14 +82,12 @@ abstract class TestCase extends Orchestra
      */
     protected function setUpDatabase($app)
     {
-        if (!$app['db']->connection()->getSchemaBuilder()->hasTable('users'))
-        {
+        if (! $app['db']->connection()->getSchemaBuilder()->hasTable('users')) {
             include_once __DIR__.'/Migrations/create_users_table.php';
             (new \CreateUsersTable())->up();
         }
 
-        if (!$app['db']->connection()->getSchemaBuilder()->hasTable('posts'))
-        {
+        if (! $app['db']->connection()->getSchemaBuilder()->hasTable('posts')) {
             include_once __DIR__.'/Migrations/create_posts_table.php';
             (new \CreatePostsTable())->up();
         }
@@ -105,8 +100,8 @@ abstract class TestCase extends Orchestra
     public function seedDatabase($app)
     {
         // database seeding
-        User::firstOrCreate(['name' => 'test user' , 'email' => 'user@permissions.com']);
-        User::firstOrCreate(['name' =>  'test admin' ,'email' => 'admin@permissions.com']);
+        User::firstOrCreate(['name' => 'test user', 'email' => 'user@permissions.com']);
+        User::firstOrCreate(['name' =>  'test admin', 'email' => 'admin@permissions.com']);
 
         $app[Role::class]->firstOrCreate(['name' => self::USER_ROLE]);
         $app[Role::class]->firstOrCreate(['name' => self::ADMIN_ROLE]);
@@ -114,7 +109,6 @@ abstract class TestCase extends Orchestra
         $app[Permission::class]->firstOrCreate(['name' => self::USER_PERMISSION]);
         $app[Permission::class]->firstOrCreate(['name' => self::ADMIN_PERMISSION]);
     }
-
 
     public function loadModels()
     {
@@ -128,7 +122,6 @@ abstract class TestCase extends Orchestra
         $this->adminPermissionModel = app(Permission::class)->where('name', self::ADMIN_PERMISSION)->first();
     }
 
-   
     protected function clearLogTestHandler()
     {
         collect($this->app['log']->getMonolog()->getHandlers())->filter(function ($handler) {
@@ -137,8 +130,7 @@ abstract class TestCase extends Orchestra
             $handler->clear();
         });
     }
-    
-    
+
     /**
      * @param $message
      * @param $level
@@ -148,9 +140,9 @@ abstract class TestCase extends Orchestra
     protected function hasLog($message, $level)
     {
         return collect($this->app['log']->getMonolog()->getHandlers())->filter(function ($handler) use ($message, $level) {
-                return $handler instanceof TestHandler
+            return $handler instanceof TestHandler
                     && $handler->hasRecordThatContains($message, $level);
-            })->count() > 0;
+        })->count() > 0;
     }
 
     /**
@@ -173,7 +165,7 @@ abstract class TestCase extends Orchestra
     protected function getPackageAliases($app)
     {
         return [
-            'PermissionsHandler' => \PermissionsHandler\Facades\PermissionsHandlerFacade::class
+            'PermissionsHandler' => \PermissionsHandler\Facades\PermissionsHandlerFacade::class,
         ];
     }
 }

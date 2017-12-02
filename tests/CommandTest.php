@@ -23,14 +23,12 @@ class CommandTest extends TestCase
         $this->assertCount(1, Permission::where('name', 'fromCommandPermission')->get());
     }
 
-
     /** @test */
     public function it_can_assign_permission_to_role()
     {
         \Artisan::call('permissions:assign', ['--role' => parent::USER_ROLE, '--permission' => parent::USER_PERMISSION]);
         $this->assertTrue($this->userRoleModel->permissions->contains('name', parent::USER_PERMISSION));
     }
-
 
     /** @test */
     public function it_can_assign_role_to_user()

@@ -16,11 +16,10 @@ class Owns implements Checkable
 
     public $key;
 
-
     public function check()
     {
         $user = auth()->user();
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 

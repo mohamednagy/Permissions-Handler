@@ -6,7 +6,7 @@
  */
 Blade::if('canDo', function ($permission) {
     $user = auth()->user();
-    if (!$user) {
+    if (! $user) {
         return false;
     }
 
@@ -20,7 +20,7 @@ Blade::if('canDo', function ($permission) {
  */
 Blade::if('permission', function ($permissions, $requireAll = false) {
     $user = auth()->user();
-    if (!$user) {
+    if (! $user) {
         return false;
     }
 
@@ -34,7 +34,7 @@ Blade::if('permission', function ($permissions, $requireAll = false) {
  */
 Blade::if('role', function ($roles, $requireAll = false) {
     $user = auth()->user();
-    if (!$user) {
+    if (! $user) {
         return false;
     }
 

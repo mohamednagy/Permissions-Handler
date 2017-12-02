@@ -7,7 +7,7 @@ use PermissionsHandler\Seeder\Seeder;
 trait RoleTrait
 {
     /**
-     * Delete role
+     * Delete role.
      *
      * @param array $options
      * @return void
@@ -27,18 +27,19 @@ trait RoleTrait
         } elseif (is_object($permission)) {
             $hasPermission = $this->permissions->contains('id', $permission->id);
         }
+
         return $hasPermission;
     }
 
     /**
-     * Assign many permission to a role
+     * Assign many permission to a role.
      *
      * @param Illuminate\Database\Eloquent\Collection|Model|array $permissions
      * @return void
      */
     public function assignPermission($permissions)
     {
-        if (!is_array($permissions)) {
+        if (! is_array($permissions)) {
             $permissions = [$permissions];
         }
         $rolePermissions = $this->permissions->pluck('id')->toArray();
@@ -57,9 +58,8 @@ trait RoleTrait
         $this->clearRelatedCache();
     }
 
-
     /**
-     * Remove all permission from a role
+     * Remove all permission from a role.
      *
      * @return void
      */
@@ -75,14 +75,14 @@ trait RoleTrait
     }
 
     /**
-     * Unassign many permission from a role
+     * Unassign many permission from a role.
      *
      * @param Illuminate\Database\Eloquent\Collection|Model|array $permissions
      * @return void
      */
     public function unAssignPermission($permissions)
     {
-        if (!is_array($permissions)) {
+        if (! is_array($permissions)) {
             $permissions = [$permissions];
         }
         $rolePermissions = $this->permissions->pluck('id')->toArray();
@@ -100,9 +100,8 @@ trait RoleTrait
         $this->clearRelatedCache();
     }
 
-
     /**
-     * Clear all caches related to this role
+     * Clear all caches related to this role.
      *
      * @return void
      */

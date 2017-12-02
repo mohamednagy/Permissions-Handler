@@ -7,9 +7,14 @@ use PermissionsHandler\Seeder\Seeder;
 
 class Permission extends Model
 {
-    protected $table = 'permissions';
-
     protected $guarded = [];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->setTable(config('permissionsHandler.table.permissions'));
+    }
 
     /**
      * The "booting" method of the model.
@@ -27,6 +32,14 @@ class Permission extends Model
 
     public function roles()
     {
-        return $this->belongsToMany(\PermissionsHandler\Models\Role::class);
+        $permissionsForeignKeyName = Inflector::singularize($this->tables['permissions']).'_id';
+        $rolesForeignKeyName = Inflector::singularize($this->tables['roles']).'_id';
+
+        return $this->belongsToMany(
+            \PermissionsHandler\Models\Permission::class,
+            config('permissionsHandler.tables.permission_role'),
+            $rolesForeignKeyName,
+            $permissionsForeignKeyName
+        );
     }
 }

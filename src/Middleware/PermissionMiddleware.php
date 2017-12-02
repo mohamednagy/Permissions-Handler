@@ -4,11 +4,9 @@ namespace PermissionsHandler\Middleware;
 
 use Closure;
 use PermissionsHandler;
-use PermissionsHandler\Permissions;
 
 class PermissionMiddleware
 {
-
     /**
      * Handle an incoming request.
      *
@@ -24,13 +22,12 @@ class PermissionMiddleware
             return $next($request);
         }
 
-        
         $user = auth()->user();
         $permissions = explode('|', $permissions);
         $requireAll = (boolean) $requireAll;
         $canGo = $user->hasPermission($permissions, $requireAll);
 
-        if (!$canGo) {
+        if (! $canGo) {
             $redirectTo = config('permissionsHandler.redirectUrl');
             if ($redirectTo) {
                 return redirect($redirectTo);

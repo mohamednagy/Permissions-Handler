@@ -2,17 +2,12 @@
 
 namespace PermissionsHandler\Tests;
 
-
 use PermissionsHandler;
 use Illuminate\Support\Facades\Route;
-use PermissionsHandler\Middleware\MethodMiddleware;
-use PermissionsHandler\Tests\Controllers\MethodTestController;
 use PermissionsHandler\Tests\Models\Post;
 
-
-class MethodMiddlewareTest extends TestCase {
-
-
+class MethodMiddlewareTest extends TestCase
+{
     protected $methodMiddleware;
 
     protected $request;
@@ -44,7 +39,6 @@ class MethodMiddlewareTest extends TestCase {
         $response->assertSee('accessed');
     }
 
-
     /** @test */
     public function a_user_with_user_role_can_access_a_controller_method_if_has_user_role()
     {
@@ -64,7 +58,6 @@ class MethodMiddlewareTest extends TestCase {
         $response->assertStatus(403);
     }
 
-
     /** @test */
     public function a_user_with_user_permission_adminPermissions_can_access_a_controller_method_if_has_this_permission()
     {
@@ -74,7 +67,6 @@ class MethodMiddlewareTest extends TestCase {
         $response = $this->get('/checkAdminPermission');
         $response->assertSee('accessed');
     }
-
 
     /** @test */
     public function a_user_must_has_all_assigned_permissions()
@@ -104,5 +96,4 @@ class MethodMiddlewareTest extends TestCase {
         $response = $this->get('/ownPost/'.$post->id);
         $response->assertStatus(403);
     }
-
 }

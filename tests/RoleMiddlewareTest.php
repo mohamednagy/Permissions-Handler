@@ -2,27 +2,21 @@
 
 namespace PermissionsHandler\Tests;
 
-
 use PermissionsHandler;
 use Illuminate\Support\Facades\Route;
 use PermissionsHandler\Middleware\RoleMiddleware;
-use PermissionsHandler\Tests\Controllers\TestController;
-use PermissionsHandler\Tests\Models\Post;
 
-
-class RoleMiddlewareTest extends TestCase {
-
-
+class RoleMiddlewareTest extends TestCase
+{
     public function setUp()
     {
         parent::setUp();
 
-        Route::group(['namespace' => 'PermissionsHandler\Tests\Controllers'], function() {
+        Route::group(['namespace' => 'PermissionsHandler\Tests\Controllers'], function () {
             Route::get('/index', 'RoleTestController@index')->middleware(RoleMiddleware::class.':user');
             Route::get('/hasOneRole', 'RoleTestController@index')->middleware(RoleMiddleware::class.':user|noExistingRole');
             Route::get('/hasNoRole', 'RoleTestController@index')->middleware(RoleMiddleware::class.':user|noExistingRole, true');
         });
-        
     }
 
     /** @test */
@@ -34,7 +28,6 @@ class RoleMiddlewareTest extends TestCase {
         $response->assertSee('accessed');
     }
 
-
     /** @test */
     public function a_user_can_access_route_if_he_has_at_least_one_role()
     {
@@ -43,7 +36,6 @@ class RoleMiddlewareTest extends TestCase {
         $response = $this->get('/hasOneRole');
         $response->assertSee('accessed');
     }
-
 
     /** @test */
     public function a_user_can_access_route_if_he_has_all_roles()
@@ -54,10 +46,4 @@ class RoleMiddlewareTest extends TestCase {
         $response = $this->get('/hasNoRole');
         $response->assertStatus(403);
     }
-
-
-
-
-    
-
 }

@@ -2,7 +2,6 @@
 
 namespace PermissionsHandler\Commands;
 
-use PermissionsHandler;
 use Illuminate\Console\Command;
 use PermissionsHandler\Models\Role;
 use PermissionsHandler\Seeder\Seeder;
@@ -47,11 +46,11 @@ class SeederCommand extends Command
         $all = $this->option('all');
 
         // seed permissions
-        if (!$permissions || $all || $rolePermissions) {
+        if (! $permissions || $all || $rolePermissions) {
             $permissions = Seeder::getFileContent('permissions.json');
             foreach ($permissions as $permission) {
                 $result = Permission::whereName($permission['name'])->first();
-                if (!$result) {
+                if (! $result) {
                     Permission::create($permission);
                 }
             }
@@ -63,7 +62,7 @@ class SeederCommand extends Command
             $roles = Seeder::getFileContent('roles.json');
             foreach ($roles as $role) {
                 $result = Role::whereName($role['name'])->first();
-                if (!$result) {
+                if (! $result) {
                     Role::create($role);
                 }
             }
@@ -76,7 +75,7 @@ class SeederCommand extends Command
             foreach ($rolePermissions as $roleName => $permissionsName) {
                 $role = Role::whereName($roleName)->first();
                 foreach ($permissionsName as $permission) {
-                    if (!$role->hasPermission($permission)) {
+                    if (! $role->hasPermission($permission)) {
                         $permission = Permission::whereName($permission)->first();
                         $role->assignPermission($permission);
                     }

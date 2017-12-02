@@ -10,14 +10,13 @@ use PermissionsHandler\Middleware\MethodMiddleware;
 
 class MethodTestController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware(MethodMiddleware::class);
     }
 
     /**
-     * Undocumented function
+     * Undocumented function.
      *
      * @return void
      */
@@ -27,20 +26,19 @@ class MethodTestController extends Controller
     }
 
     /**
-     * a user that has role `user` can access this method 
+     * a user that has role `user` can access this method.
      * 
      * @Roles({"admin"})
      * 
-     * @return boolean
+     * @return bool
      */
     public function checkAdminRole()
     {
         return 'accessed';
     }
 
-
     /**
-     * a user must has all assigned roles
+     * a user must has all assigned roles.
      *
      * @Roles({"admin", "notExistingRole"}, requireAll=true)
      * 
@@ -52,7 +50,7 @@ class MethodTestController extends Controller
     }
 
     /**
-     * a user with permissoin adminPermission can access this method
+     * a user with permissoin adminPermission can access this method.
      *
      * @Permissions({"adminPermission", "notExistsPermission"})
      * 
@@ -63,9 +61,8 @@ class MethodTestController extends Controller
         return 'accessed';
     }
 
-
     /**
-     * a user must has all assigned Permissions
+     * a user must has all assigned Permissions.
      *
      * @Permissions({"userPermission", "notExistingPermission"}, requireAll=true)
      * 
@@ -77,7 +74,7 @@ class MethodTestController extends Controller
     }
 
     /**
-     * a use must owns the post to be all to access
+     * a use must owns the post to be all to access.
      * 
      * @Owns(relation="posts", parameter="id")
      *
@@ -88,9 +85,8 @@ class MethodTestController extends Controller
         return 'accessed';
     }
 
-
     /**
-     * This is an exluded route, should be passed even annotations are found
+     * This is an exluded route, should be passed even annotations are found.
      * 
      * @Roles({"admin})
      *
@@ -100,6 +96,4 @@ class MethodTestController extends Controller
     {
         return 'accessed';
     }
-
 }
-

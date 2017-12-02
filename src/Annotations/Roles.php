@@ -17,8 +17,8 @@ class Roles implements Checkable
     public function check()
     {
         $user = auth()->user();
-        
-        if (!$user) {
+
+        if (! $user) {
             return false;
         }
 

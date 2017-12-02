@@ -1,76 +1,78 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
+use Doctrine\Common\Inflector\Inflector;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateUserPermissionsMigrations extends Migration
 {
+    /**
+     * @var array
+     */
+    private $tables;
+
+    /**
+     * __construct.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->tables = config('permissionsHandler.tables');
+    }
+
     /**
      * Run the migrations.
      *
      * @return void
      */
-    private $actorsTable;
-    private $actor;
-
-    public function __construct()
-    {
-        $config = config('permissionsHandler');
-        if(key_exists('table',$config)){
-            $this->actorsTable = $config['table'];
-        }
-        $this->actor=substr($this->actorsTable,0,-1);
-    }
-
     public function up()
     {
-
-        if(!Schema::hasTable($this->actorsTable)){
-            Schema::create($this->actorsTable, function (Blueprint $table) {
-                $table->increments('id');
-                $table->string('name');
-                $table->string('email')->unique();
-                $table->string('password');
-                $table->rememberToken();
-                $table->timestamps();
-            });
-        }
-
-        if (!Schema::hasTable('roles')) {
-            Schema::create('roles', function (Blueprint $table) {
+        if (! Schema::hasTable($this->tables['roles'])) {
+            Schema::create($this->tables['roles'], function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('name');
                 $table->timestamps();
             });
         }
 
-        if (!Schema::hasTable('role_'.$this->actor)) {
-            Schema::create('role_'.$this->actor, function (Blueprint $table) {
-                $table->increments('id');
-                $table->integer('role_id')->unsigned()->index();
-                $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
-                $table->integer($this->actor.'_id')->unsigned()->index();
-                $table->foreign($this->actor.'_id')->references('id')->on($this->actorsTable)->onDelete('cascade');
+        if (! Schema::hasTable($this->tables['role_user'])) {
+            Schema::create($this->tables['role_user'], function (Blueprint $table) {
+                $foreignKeyName = Inflector::singularize($this->tables['roles']).'_id';
+
+                $table->integer($foreignKeyName)->unsigned()->index();
+                $table->foreign($foreignKeyName)->references('id')->on($this->tables['roles'])->onDelete('cascade');
+
+                $table->morphs('model');
+
                 $table->timestamps();
+
+                $table->primary([$foreignKeyName, 'model_id', 'model_type']);
             });
         }
 
-        if (!Schema::hasTable('permissions')) {
-            Schema::create('permissions', function (Blueprint $table) {
+        if (! Schema::hasTable($this->tables['permissions'])) {
+            Schema::create($this->tables['permissions'], function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('name');
                 $table->timestamps();
             });
         }
 
-        if (!Schema::hasTable('permission_role')) {
-            Schema::create('permission_role', function (Blueprint $table) {
-                $table->increments('id');
-                $table->integer('permission_id')->unsigned()->index();
-                $table->foreign('permission_id')->references('id')->on('permissions')->onDelete('cascade');
-                $table->integer('role_id')->unsigned()->index();
-                $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
+        if (! Schema::hasTable($this->tables['permission_role'])) {
+            Schema::create($this->tables['permission_role'], function (Blueprint $table) {
+                $permissionsForeignKeyName = Inflector::singularize($this->tables['permissions']).'_id';
+                $rolesForeignKeyName = Inflector::singularize($this->tables['roles']).'_id';
+
+                $table->integer($permissionsForeignKeyName)->unsigned()->index();
+                $table->foreign($permissionsForeignKeyName)->references('id')->on($this->tables['permissions'])->onDelete('cascade');
+
+                $table->integer($rolesForeignKeyName)->unsigned()->index();
+                $table->foreign($rolesForeignKeyName)->references('id')->on($this->tables['roles'])->onDelete('cascade');
+
                 $table->timestamps();
+
+                $table->primary([$permissionsForeignKeyName, $rolesForeignKeyName]);
             });
         }
     }
@@ -82,21 +84,20 @@ class CreateUserPermissionsMigrations extends Migration
      */
     public function down()
     {
+        if (Schema::hasTable($this->tables['role_user'])) {
+            Schema::drop($this->tables['role_user']);
+        }
 
-        if (Schema::hasTable('role_user')) {
-            Schema::drop('role_user');
+        if (Schema::hasTable($this->tables['permission_role'])) {
+            Schema::drop($this->tables['permission_role']);
         }
-        if (Schema::hasTable('permission_role')) {
-            Schema::drop('permission_role');
+
+        if (Schema::hasTable($this->tables['roles'])) {
+            Schema::drop($this->tables['roles']);
         }
-        if (Schema::hasTable('roles')) {
-            Schema::drop('roles');
-        }
-        if (Schema::hasTable('permissions')) {
-            Schema::drop('permissions');
-        }
-        if (Schema::hasTable($this->actorsTable)) {
-            Schema::drop($this->actorsTable);
+
+        if (Schema::hasTable($this->tables['permissions'])) {
+            Schema::drop($this->tables['permissions']);
         }
     }
 }

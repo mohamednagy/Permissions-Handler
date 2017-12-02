@@ -111,12 +111,12 @@ trait RoleTrait
                     ->select('role_id', 'model_id', 'model_type')
                     ->where('role_id', $this->id)
                     ->get();
-                    
+
         $users = collect();
-        foreach($relatedUsers as $user){
+        foreach ($relatedUsers as $user) {
             $users->push(($user->model_type)::find($user->model_id));
         }
-        
+
         return $users;
     }
 

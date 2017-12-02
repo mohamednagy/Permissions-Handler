@@ -4,6 +4,8 @@ namespace PermissionsHandler\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use PermissionsHandler\Seeder\Seeder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use PermissionsHandler\Exceptions\PermissionNotFound;
 
 class Permission extends Model
 {
@@ -28,7 +30,7 @@ class Permission extends Model
         }
     }
 
-    public function roles()
+    public function roles(): BelongsToMany
     {
         $permissionsForeignKeyName = Inflector::singularize(config('permissionsHandler.tables.permissions')).'_id';
         $rolesForeignKeyName = Inflector::singularize(config('permissionsHandler.tables.roles')).'_id';
@@ -39,5 +41,22 @@ class Permission extends Model
             $rolesForeignKeyName,
             $permissionsForeignKeyName
         );
+    }
+
+    public static function getByName(string $name): self
+    {
+        $permission = Cache::remember(
+            'permissionsHandler.permissions.'.$name,
+            config('permissionsHandler.cacheExpiration'),
+            function () use ($name) {
+                return self::where('name', $name)->first();
+            }
+        );
+
+        if (! $permission) {
+            throw new PermissionNotFound("Permission with name $name doesn't exists");
+        }
+
+        return $permission;
     }
 }

@@ -3,9 +3,11 @@
 namespace PermissionsHandler\Models;
 
 use PermissionsHandler\Seeder\Seeder;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use PermissionsHandler\Traits\RoleTrait;
 use Doctrine\Common\Inflector\Inflector;
+use PermissionsHandler\Exceptions\RoleNotFound;
 
 class Role extends Model
 {
@@ -45,5 +47,21 @@ class Role extends Model
             $permissionsForeignKeyName,
             $rolesForeignKeyName
         );
+    }
+
+    public static function getByName(string $name): self
+    {
+        $role = Cache::remember(
+            'permissionsHandler.roles.'.$name,
+            config('permissionsHandler.cacheExpiration'),
+            function () use ($name) {
+                return self::where('name', $name)->first();
+            }
+        );
+        if (! $role) {
+            throw new RoleNotFound("Role with name $name doesn't exists");
+        }
+
+        return $role;
     }
 }

@@ -2,7 +2,6 @@
 
 namespace PermissionsHandler\Commands;
 
-use PermissionsHandler;
 use Illuminate\Console\Command;
 use PermissionsHandler\Models\Role;
 use PermissionsHandler\Models\Permission;

@@ -80,9 +80,10 @@ abstract class TestCase extends Orchestra
             'admins' => [
                 'driver' => 'eloquent',
                 'model' => Admin::class,
-            ]
+            ],
         ];
         $app['config']->set('auth.providers', $providers);
+        $app['config']->set('app.debug', true);
         $app['log']->getMonolog()->pushHandler(new TestHandler());
     }
     /**

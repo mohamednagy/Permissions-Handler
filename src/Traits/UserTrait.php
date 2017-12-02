@@ -86,9 +86,16 @@ trait UserTrait
      */
     public function hasRole($roles, $requireAll = false)
     {
-        if (! is_array($roles)) {
-            $roles = [$roles];
-        }
+        $roles = collect($roles)
+                    ->flatten()
+                    ->map(function ($role) {
+                        if (is_string($role)) {
+                            $role = Role::getByName($role);
+                        }
+
+                        return $role;
+                    })
+                    ->pluck('name', 'id')->toArray();
 
         $cachedRoles = $this->cachedRoles();
         $result = array_intersect($roles, $cachedRoles);
@@ -138,12 +145,20 @@ trait UserTrait
      * @param Illuminate\Database\Eloquent\Model $role
      * @return void
      */
-    public function assignRole($role)
+    public function assignRole(...$roles)
     {
-        if (! $this->roles->contains('id', $role->id)) {
-            $this->roles()->attach($role->id);
-            $this->clearCachedRoles();
-        }
+        $roles = collect($roles)
+                ->flatten()
+                ->map(function ($role) {
+                    if (is_string($role)) {
+                        $role = Role::where('name', $role)->first();
+                    }
+
+                    return $role;
+                })
+                ->all();
+        $this->roles()->saveMany($roles);
+        $this->clearCachedRoles();
     }
 
     /**

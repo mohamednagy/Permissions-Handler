@@ -27,10 +27,11 @@ trait RoleTrait
         }
         $permissions = collect($permissions)
                         ->flatten()
-                        ->map(function($permission){
+                        ->map(function ($permission) {
                             if (is_string($permission)) {
                                 $permission = Permission::getByName($permission);
                             }
+
                             return $permission;
                         })
                         ->pluck('name', 'id')->toArray();
@@ -53,13 +54,14 @@ trait RoleTrait
     {
         $permissions = collect($permissions)
                         ->flatten()
-                        ->map(function($permission){
-                            if(is_string($permission)){
+                        ->map(function ($permission) {
+                            if (is_string($permission)) {
                                 $permission = Permission::getByName($permission);
                             }
+
                             return $permission;
                         });
-                        
+
         $this->permissions()->saveMany($permissions);
 
         if (config('permissionsHandler.seeder') == true) {
@@ -95,10 +97,11 @@ trait RoleTrait
     {
         $permissions = collect($permissions)
                         ->flatten()
-                        ->map(function($permission){
+                        ->map(function ($permission) {
                             if (is_string($permission)) {
                                 $permission = Permission::getByName($permission);
                             }
+
                             return $permission;
                         })
                         ->pluck('name', 'id')->toArray();
@@ -119,9 +122,8 @@ trait RoleTrait
         $this->clearRelatedCache();
     }
 
-
     /**
-     * Get the cached permissions for specific role
+     * Get the cached permissions for specific role.
      *
      * @return Collection
      */
@@ -130,7 +132,7 @@ trait RoleTrait
         return Cache::remember(
             $this->getCachePrefix(),
             config('permissionsHandler.cacheExpiration'),
-            function() {
+            function () {
                 return $this->permissions;
             }
         );
@@ -170,7 +172,6 @@ trait RoleTrait
             $user->clearCachedPermissions();
         }
     }
-
 
     public function getCachePrefix()
     {

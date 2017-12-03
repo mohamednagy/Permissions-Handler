@@ -3,7 +3,6 @@
 namespace PermissionsHandler\Traits;
 
 use PermissionsHandler;
-use Illuminate\Support\Facades\DB;
 use PermissionsHandler\Models\Role;
 use Illuminate\Support\Facades\Cache;
 use Doctrine\Common\Inflector\Inflector;
@@ -71,6 +70,7 @@ trait UserTrait
                 return Permission::whereHas(
                     'roles', function ($query) use ($roles) {
                         $rolesForeignKeyName = Inflector::singularize(config('permissionsHandler.tables.roles')).'_id';
+
                         return $query->whereIn($rolesForeignKeyName, array_keys($roles));
                     }
                 )->pluck('name', 'id')->toArray();
@@ -126,7 +126,7 @@ trait UserTrait
                         return $permission;
                     })
                     ->pluck('name', 'id')->toArray();
-                    
+
         $cachedPermissions = $this->cachedPermissions();
         $result = array_intersect($permissions, $cachedPermissions);
         if ($requireAll) {
@@ -180,10 +180,11 @@ trait UserTrait
     {
         $roles = collect($roles)
                     ->flatten()
-                    ->map(function($role){
+                    ->map(function ($role) {
                         if (is_string($role)) {
                             $role = Role::getByName($role);
                         }
+
                         return $role;
                     })
                     ->pluck('name', 'id');
@@ -196,7 +197,7 @@ trait UserTrait
         }
 
         $this->roles()->sync($userRoles);
-        
+
         $this->clearCachedRoles();
         $this->clearCachedPermissions();
     }

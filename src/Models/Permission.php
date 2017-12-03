@@ -5,6 +5,7 @@ namespace PermissionsHandler\Models;
 use PermissionsHandler\Seeder\Seeder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
+use Doctrine\Common\Inflector\Inflector;
 use PermissionsHandler\Exceptions\PermissionNotFound;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 

@@ -1,28 +1,10 @@
-# Permissions Handler
-Permissions-handler is an easy-to-use package for laravel 5  to manage users roles and permissions based on  [Doctrine Annotations](https://github.com/doctrine/annotations).
+## Usage
 
-
-* [Installation](https://github.com/mohamednagy/Permissions-Handler/wiki/installation)
-* [Config](https://github.com/mohamednagy/Permissions-Handler/wiki/config)
-* [Usage](https://github.com/mohamednagy/Permissions-Handler/wiki/usage)
-    * [With routes and methods](https://github.com/mohamednagy/Permissions-Handler/wiki/usage#with-routes)
-    * [Blade directive](https://github.com/mohamednagy/Permissions-Handler/wiki/usage#blade-directives)
-    * [Within your code](https://github.com/mohamednagy/Permissions-Handler/wiki/usage#within-your-code)
-    * [Artisan commands](https://github.com/mohamednagy/Permissions-Handler/wiki/usage#artisan-commands)
-
-
-## Features
-
-### Annotations
-
+### With routes and methods
+Permissions Handler comes with three middlewares `MethodMiddleware`, `PermissionMiddleware` and `RoleMiddleware`
+#### **MethodMiddleware**
+This middleware will check for annotations written for your methods and check the permisions and roles assigned to this method, register this middleware into your `kernel.php` under `$middleware` to use it globaly over your system or `middlewareGroups` to use over groups or register it anywhere else according to you needs.
 ```
-use PermissionsHandler\Owns;
-use PermissionsHandler\Roles;
-use PermissionsHandler\Permissions;
-.
-.
-.
-
 /**
 * @Permissions({"add-posts"})
 */
@@ -46,24 +28,153 @@ function update(Request $request){
 }
 
 ```
+`Permissions` and `Roles` accepts array of permissions and roles in format `{"add-users", "view-users"}` and `{"super-admin", "admin"}` respectively. <br>
 
-As the above example, Permissions Handler comes with three types of annotations.
- * `Permissions({"perm1"})`: <br> only users that have *perm1* permission can access this method
- * `Roles({"role1"})`: <br> only users that have *role1* role can access this method
- * `Owns(relation="posts", attribute="id")`: <br> for example, if you are the owner of the post then only you whose can edit this post. `Owns` will ensure that, just pass the relation and the attribute which *PermissionsHandler* will get the value from the *Request* accordingly.
+You can pass extra optional parameter `requireAll=true` (default is *false*) to enforce the user to has all the permissions and roles to be able to access the method, for example
+```
+/**
+* @Permissions({"add-posts", "edit-posts"}, requireAll=true)
+*/
+function store(Request $request){
+    // your code here
+}
+```
 
- Check the [usage](https://github.com/mohamednagy/Permissions-Handler/wiki/usage) section for more features and details
+`Owns` annotation dives more deeper, its used to ensure that the user owns a specific resource, for example, only the post owner can edit the post, so you need to ensure that the user own the post via a relation.<br>
+**Paramters** <br>
+* relation (required)<br>
+the eloquent relation
+* attribute (required) <br>
+the request paramter which PermissionsHandler get its value from the request, for example `attribute="id"` then PermissionsHandler will search for parameter "id" in the request `$request->id`.
+* key (optional) <br>
+```$user->{$this->relation}->contains($this->key, $request->{$this->attribute});``` <br>
+as you see `key` is the attribute that we search by. by default the `attribute` paramter is the `key` paramters unless you decide something else then you have to deine your `attribute` and `key` parameter.
 
- ### Caching
- Permissions Handler uses the caching feature on two levels
- * **Database Cache**: <br>
- Permissions Handler uses the cache driver that configured in your `cache.php` file for caching user permissions, roles for configurable time.
- * **Annotation Cache**: <br>
- Because of parsing the files against the annotations is costy; permission Hander caches the parsed annotations to avoid parsing it again. by default this features is disabled in the development environment and enabled in the production. 
 
-### Seeder
-If you enabled the `seeder` option from the `config/permissionsHandler.php` file then Permissions Handler will save each created permission, role and role-permissions to fils to be able to seed it again in later time or share them with others.
 
-## License
+#### **PermissionMiddleware**
+This middleware used to handle the permissions for specific groups or routes.<br>
+register the route into the kernel.php 
+```
+protected $routeMiddleware = [
+    'permissions' => PermissionsHandler\Middleware\PermissionMiddleware::class
+]
+```
 
-[MIT License](http://opensource.org/licenses/MIT)
+then you can use it as the following:
+
+```
+// permissions
+Route::group(['middleware' => ['permissions:add-user']], function () {
+    //
+});
+```
+If you need to pass more than one permission, you can pass them with the following format `add-user|edit-user`. <br>
+The middleware accepts additional boolean parameter `$requireAll`, it validates that the user must has all the permissions in the first parameter, default is `false`.
+
+
+#### **RoleMiddleware**
+This middleware used to handle the roles for specific groups or routes.<br>
+It's working the same as `PermissionsMiddleware`
+
+
+### Blade Directives
+`PermissionsHandler` comes with some useful blade directives
+
+```
+@canDo('edit-user')
+  current authenticated user has edit-user permission
+@endcanDo
+
+@permission('delete-users') // @permission(['edit-users', 'view-users']) or @permission(['edit-users', 'view-users'], true)
+   current authenticated user has edit-user permission
+@endpermission
+
+@role('admin') // @role(['edit-users', 'view-users']) or rRole(['edit-users', 'view-users'], true)
+ current authenticated user has admin role
+@endrole
+```
+
+### Within your code
+* **User**
+```
+/**
+* accepts string
+*/
+$canDo = $user->canDo('add-users');
+```
+```
+$hasPermission = $user->hasPermission('add-users'); 
+// or has one of any permission
+$hasPermission = $user->hasPermission(['add-users', 'view-users]);
+// or has all the permissions
+$hasPermission = $user->hasPermission(['add-users', 'view-users], true);
+```
+```
+$hasRole = $user->hasRole('admin');
+// or has one of any role
+$hasRole = $user->hasRole(['user', 'admin]);
+// or has all the roles
+$hasRole = $user->hasRole(['user', 'admin], true);
+```
+```
+/** 
+ * accepts model or collection
+ */
+$user->assignRole(Role::whereName('admin')->first());
+```
+```
+/** 
+ * accepts model or collection
+ */
+$adminRole = Role::whereName('admin')->first();
+$user->unAssignRole($adminRole);
+```
+```
+/**
+ * remove all the assigned roles
+ */
+$user->unAssignAllRoles();
+```
+
+* **Role**
+```
+/** 
+ * accepts string or model
+ */
+$role->hasPermission('perm1');
+```
+```
+/**
+ * accepts model or collection
+ */
+$role->assignPermission(Permission::find(1));
+```
+```
+/**
+ * accepts model or collection
+ */
+$role->unAssignPermission(Permission::find(1));
+```
+```
+/**
+ * unassign all permissions
+ */
+$role->unAssignAllPermissions();
+```
+
+### Artisan commands
+* Add permission <br>
+`php artisan permissions:add --permission=add-users`
+
+* Add Role <br>
+`php artisan permissions:add --role=admin`
+
+* Assign permission to role <br>
+`php artisan permissions:assign --role=admin --permission=add-users`
+
+* Assign role to user <br>
+`php artisan permissions:assign --role=admin --user-id=5`
+
+* Clear cached annoations <br>
+`php artisan permissions:clear-cached-annotations`

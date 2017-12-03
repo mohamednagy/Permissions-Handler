@@ -40,7 +40,7 @@ class MethodTestController extends Controller
     /**
      * a user must has all assigned roles.
      *
-     * @Roles({"admin", "notExistingRole"}, requireAll=true)
+     * @Roles({"admin", "user"}, requireAll=true)
      * 
      * @return void
      */

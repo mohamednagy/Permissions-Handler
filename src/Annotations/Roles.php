@@ -21,7 +21,7 @@ class Roles implements Checkable
         if (! $user) {
             return false;
         }
-
+        
         return $user->hasRole($this->roles, $this->requireAll);
     }
 }

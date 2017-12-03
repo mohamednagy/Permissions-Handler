@@ -70,7 +70,8 @@ trait UserTrait
             function () use ($roles) {
                 return Permission::whereHas(
                     'roles', function ($query) use ($roles) {
-                        return $query->whereIn(DB::raw('roles.id'), array_keys($roles));
+                        $rolesForeignKeyName = Inflector::singularize(config('permissionsHandler.tables.roles')).'_id';
+                        return $query->whereIn($rolesForeignKeyName, array_keys($roles));
                     }
                 )->pluck('name', 'id')->toArray();
             }

@@ -52,7 +52,7 @@ class MethodTestController extends Controller
     /**
      * a user with permissoin adminPermission can access this method.
      *
-     * @Permissions({"adminPermission", "notExistsPermission"})
+     * @Permissions({"adminPermission", "userPermission"})
      * 
      * @return void
      */
@@ -64,7 +64,7 @@ class MethodTestController extends Controller
     /**
      * a user must has all assigned Permissions.
      *
-     * @Permissions({"userPermission", "notExistingPermission"}, requireAll=true)
+     * @Permissions({"userPermission", "adminPermission"}, requireAll=true)
      * 
      * @return void
      */

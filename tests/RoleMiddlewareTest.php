@@ -14,8 +14,8 @@ class RoleMiddlewareTest extends TestCase
 
         Route::group(['namespace' => 'PermissionsHandler\Tests\Controllers'], function () {
             Route::get('/index', 'RoleTestController@index')->middleware(RoleMiddleware::class.':user');
-            Route::get('/hasOneRole', 'RoleTestController@index')->middleware(RoleMiddleware::class.':user|noExistingRole');
-            Route::get('/hasNoRole', 'RoleTestController@index')->middleware(RoleMiddleware::class.':user|noExistingRole, true');
+            Route::get('/hasOneRole', 'RoleTestController@index')->middleware(RoleMiddleware::class.':user|admin');
+            Route::get('/hasNoRole', 'RoleTestController@index')->middleware(RoleMiddleware::class.':user|admin, true');
         });
     }
 

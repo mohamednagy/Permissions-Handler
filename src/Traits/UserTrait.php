@@ -116,9 +116,17 @@ trait UserTrait
      */
     public function hasPermission($permissions, $requireAll = false)
     {
-        if (! is_array($permissions)) {
-            $permissions = [$permissions];
-        }
+        $permissions = collect($permissions)
+                    ->flatten()
+                    ->map(function ($permission) {
+                        if (is_string($permission)) {
+                            $permission = Permission::getByName($permission);
+                        }
+
+                        return $permission;
+                    })
+                    ->pluck('name', 'id')->toArray();
+                    
         $cachedPermissions = $this->cachedPermissions();
         $result = array_intersect($permissions, $cachedPermissions);
         if ($requireAll) {

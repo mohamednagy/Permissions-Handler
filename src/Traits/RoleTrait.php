@@ -16,7 +16,6 @@ trait RoleTrait
      */
     public function delete()
     {
-        $users = $this->users;
         $this->clearRelatedCache();
         parent::delete();
     }

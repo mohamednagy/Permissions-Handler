@@ -16,8 +16,8 @@ class PermissionMiddlewareTest extends TestCase
 
         Route::group(['namespace' => 'PermissionsHandler\Tests\Controllers'], function () {
             Route::get('/index', 'PermissionTestController@index')->middleware(PermissionMiddleware::class.':userPermission');
-            Route::get('/hasOnePermission', 'PermissionTestController@index')->middleware(PermissionMiddleware::class.':userPermission|noExistingPermission');
-            Route::get('/hasNoPermission', 'PermissionTestController@index')->middleware(PermissionMiddleware::class.':userPermission|noExistingPermission, true');
+            Route::get('/hasOnePermission', 'PermissionTestController@index')->middleware(PermissionMiddleware::class.':userPermission|adminPermission');
+            Route::get('/hasNoPermission', 'PermissionTestController@index')->middleware(PermissionMiddleware::class.':userPermission|adminPermission, true');
         });
     }
 

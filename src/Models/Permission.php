@@ -38,7 +38,7 @@ class Permission extends Model
         $rolesForeignKeyName = Inflector::singularize(config('permissionsHandler.tables.roles')).'_id';
 
         return $this->belongsToMany(
-            \PermissionsHandler\Models\Permission::class,
+            \PermissionsHandler\Models\Role::class,
             config('permissionsHandler.tables.permission_role'),
             $rolesForeignKeyName,
             $permissionsForeignKeyName

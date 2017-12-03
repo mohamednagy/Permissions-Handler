@@ -104,16 +104,9 @@ trait RoleTrait
 
                             return $permission;
                         })
-                        ->pluck('name', 'id')->toArray();
-
-        $cachedPermissions = $this->cachedPermissions()->pluck('name', 'id')->toArray();
-        foreach ($permissions as $id => $permission) {
-            if (in_array($permission, $cachedPermissions)) {
-                unset($cachedPermissions[$id]);
-            }
-        }
-
-        $this->permissions()->sync($cachedPermissions);
+                        ->all();
+        
+        $this->permissions()->detach(array_keys($permissions));
 
         if (config('permissionsHandler.seeder') == true) {
             Seeder::revokeRolePermissions($this, $permissions);

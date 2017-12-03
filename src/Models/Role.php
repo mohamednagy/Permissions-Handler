@@ -35,7 +35,7 @@ class Role extends Model
             });
         }
     }
-
+    
     public function permissions()
     {
         $permissionsForeignKeyName = Inflector::singularize(config('permissionsHandler.tables.permissions')).'_id';

@@ -15,6 +15,9 @@
             "PermissionsHandler\\Tests\\": "tests/"
         }
     },
+    "scripts":{
+        "test":"./vendor/bin/phpunit"
+    },
     "require": {
         "doctrine/annotations" : "1.4.*"
     },

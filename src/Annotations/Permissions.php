@@ -2,13 +2,13 @@
 
 namespace PermissionsHandler;
 
-use PermissionsHandler\Annotations\Checkable;
+use PermissionsHandler\Annotations\AbstractCheck;
 
 /**
  * @Annotation
  * @Target("METHOD")
  */
-class Permissions implements Checkable
+class Permissions extends AbstractCheck
 {
     public $permissions;
 
@@ -16,7 +16,7 @@ class Permissions implements Checkable
 
     public function check()
     {
-        $user = auth()->user();
+        $user = $this->getUserFromGuards();
 
         if (! $user) {
             return false;

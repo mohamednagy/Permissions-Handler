@@ -83,6 +83,24 @@ abstract class TestCase extends Orchestra
             ],
         ];
         $app['config']->set('auth.providers', $providers);
+
+        $guards = [
+            'web' => [
+                'driver' => 'session',
+                'provider' => 'users',
+            ],
+            'users' => [
+                'driver' => 'session',
+                'provider' => 'users',
+            ],
+    
+            'admins' => [
+                'driver' => 'session',
+                'provider' => 'admins',
+            ],
+        ];
+        $app['config']->set('auth.guards', $guards);
+
         $app['config']->set('app.debug', true);
         $app['log']->getMonolog()->pushHandler(new TestHandler());
     }

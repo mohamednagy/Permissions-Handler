@@ -87,6 +87,9 @@ trait UserTrait
      */
     public function hasRole($roles, $requireAll = false)
     {
+        if (! is_array($roles)) {
+            $roles = [$roles];
+        }
         $roles = collect($roles)
                     ->flatten()
                     ->map(function ($role) {
@@ -116,6 +119,9 @@ trait UserTrait
      */
     public function hasPermission($permissions, $requireAll = false)
     {
+        if (! is_array($permissions)) {
+            $permissions = [$permissions];
+        }
         $permissions = collect($permissions)
                     ->flatten()
                     ->map(function ($permission) {

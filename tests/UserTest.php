@@ -15,7 +15,6 @@ class UserTest extends TestCase
     }
 
     /** @test */
-    
     public function it_can_assign_role_model_to_user()
     {
         $this->userModel->assignRole($this->userRoleModel);
@@ -94,8 +93,17 @@ class UserTest extends TestCase
         $this->userRoleModel->assignPermission($this->userPermissionModel);
         $this->userModel->assignRole($this->userRoleModel);
 
-        $this->assertTrue($this->userRoleModel->hasPermission($this->userPermissionModel));
+        $this->assertTrue($this->userModel->hasPermission($this->userPermissionModel));
     }
+
+     /** @test */
+     public function a_user_has_permission_by_name()
+     {
+         $this->userRoleModel->assignPermission($this->userPermissionModel);
+         $this->userModel->assignRole($this->userRoleModel->name);
+ 
+         $this->assertTrue($this->userModel->hasPermission($this->userPermissionModel));
+     }
 
     /** @test */
     public function a_user_has_at_least_permissions_models_as_array()
@@ -148,6 +156,106 @@ class UserTest extends TestCase
         $this->assertFalse($this->userModel->hasPermission(['permission1', 'permission2'], true));
     }
 
+    /** @test */
+    public function a_user_has_role_model()
+    {
+        $this->userModel->assignRole($this->userRoleModel);
 
+        $this->assertTrue($this->userModel->hasRole($this->userRoleModel));
+    }
+
+    /** @test */
+    public function a_user_has_role_by_name()
+    {
+        $this->userModel->assignRole($this->userRoleModel);
+
+        $this->assertTrue($this->userModel->hasRole($this->userRoleModel->name));
+    }
+
+    /** @test */
+    public function a_user_has_roles_as_array_of_models()
+    {
+        $role1 = Role::create(['name' => 'role1']);
+        $role2 = Role::create(['name' => 'role2']);
+
+        $this->userModel->assignRole($role1, $role2);
+
+        $this->assertTrue($this->userModel->hasRole([$role1, $role2]));
+    }
+
+    /** @test */
+    public function a_user_has_roles_as_array_of_strings()
+    {
+        $role1 = Role::create(['name' => 'role1']);
+        $role2 = Role::create(['name' => 'role2']);
+
+        $this->userModel->assignRole($role1, $role2);
+
+        $this->assertTrue($this->userModel->hasRole(['role1', 'role2']));
+    }
+
+    /** @test */
+    public function a_user_has_roles_at_least_one_role()
+    {
+        $role1 = Role::create(['name' => 'role1']);
+        $role2 = Role::create(['name' => 'role2']);
+
+        $this->userModel->assignRole($role1);
+
+        $this->assertTrue($this->userModel->hasRole(['role1', 'role2']));
+    }
+
+    /** @test */
+    public function a_user_must_has_all_rules()
+    {
+        $role1 = Role::create(['name' => 'role1']);
+        $role2 = Role::create(['name' => 'role2']);
+
+        $this->userModel->assignRole($role1);
+
+        $this->assertFalse($this->userModel->hasRole(['role1', 'role2'], true));
+    }
+
+    /** @test */
+    public function a_role_can_be_revoked_from_user()
+    {
+        $this->userModel->revokeRole($this->userRoleModel);
+        $this->assertFalse($this->userModel->hasRole($this->userRoleModel));
+    }
+
+    /** @test */
+    public function roles_can_be_revoked_from_user_as_array_of_models()
+    {
+        $this->userModel->revokeRole([$this->userRoleModel, $this->adminRoleModel]);
+        $this->assertFalse($this->userModel->hasRole($this->userRoleModel));
+    }
+
+    /** @test */
+    public function roles_can_be_revoked_from_user_as_array_of_strings()
+    {
+        $this->userModel->revokeRole(['user', 'admin']);
+        $this->assertFalse($this->userModel->hasRole($this->userRoleModel));
+    }
+
+    /** @test */
+    public function roles_can_be_revoked_from_user_as_arguments_of_strings()
+    {
+        $this->userModel->revokeRole('user', 'admin');
+        $this->assertFalse($this->userModel->hasRole($this->userRoleModel));
+    }
+
+    /** @test */
+    public function roles_can_be_revoked_from_user_as_arguments_of_models()
+    {
+        $this->userModel->revokeRole($this->userRoleModel, $this->adminRoleModel);
+        $this->assertFalse($this->userModel->hasRole($this->userRoleModel));
+    }
+
+    /** @test */
+    public function all_roles_can_be_revoked_from_user()
+    {
+        $this->userModel->revokeAllRoles();
+        $this->assertCount(0, $this->userModel->roles);
+    }
 
 }

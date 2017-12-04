@@ -14,6 +14,12 @@ class Roles extends AbstractCheck
 
     public $requireAll = false;
 
+    public function __construct($roles, $requireAll = false)
+    {
+        $this->roles = $roles;
+        $this->requireAll = $requireAll;
+    }
+
     public function check()
     {
         $user = $this->getUserFromGuards();

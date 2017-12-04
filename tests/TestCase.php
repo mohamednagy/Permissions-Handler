@@ -88,12 +88,7 @@ abstract class TestCase extends Orchestra
             'web' => [
                 'driver' => 'session',
                 'provider' => 'users',
-            ],
-            'users' => [
-                'driver' => 'session',
-                'provider' => 'users',
-            ],
-    
+            ],    
             'admins' => [
                 'driver' => 'session',
                 'provider' => 'admins',

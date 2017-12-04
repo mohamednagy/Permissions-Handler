@@ -14,6 +14,12 @@ class Permissions extends AbstractCheck
 
     public $requireAll = false;
 
+    public function __construct($permissions, $requireAll = false)
+    {
+        $this->permissions = $permissions;
+        $this->requireAll = $requireAll;
+    }
+
     public function check()
     {
         $user = $this->getUserFromGuards();

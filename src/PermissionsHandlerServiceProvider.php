@@ -2,8 +2,10 @@
 
 namespace PermissionsHandler;
 
-use Doctrine\Common\Annotations\AnnotationRegistry;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Illuminate\Foundation\Application as LaravelApplication;
 
 class PermissionsHandlerServiceProvider extends ServiceProvider
@@ -26,6 +28,13 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
                 \PermissionsHandler\Commands\ClearAnnotationsCache::class,
             ]);
         }
+
+        Gate::before(function (Authenticatable $user, string $ability) {
+            if (method_exists($user, 'hasPermission')) {
+                return $user->hasPermission($ability);
+            }
+            return true;
+        });
     }
 
     /**

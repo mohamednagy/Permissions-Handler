@@ -143,18 +143,6 @@ trait UserTrait
     }
 
     /**
-     * Check if the user has a permission, is alias for hasPermission.
-     *
-     * @param string $permission
-     *
-     * @return bool
-     */
-    public function canDo($permission)
-    {
-        return in_array($permission, $this->cachedPermissions());
-    }
-
-    /**
      * assign role to user.
      *
      * @param Illuminate\Database\Eloquent\Model $role

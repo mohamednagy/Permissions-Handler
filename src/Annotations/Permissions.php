@@ -33,7 +33,7 @@ class Permissions extends AbstractCheck
         }
 
         $this->permissions = isset($this->permissions['value']) ? $this->permissions['value'] :  $this->permissions;
-
+        
         return $user->hasPermission($this->permissions, $this->requireAll);
     }
 }

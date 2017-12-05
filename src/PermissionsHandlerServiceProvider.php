@@ -2,7 +2,10 @@
 
 namespace PermissionsHandler;
 
+use PermissionsHandler\Roles;
+use PermissionsHandler\Permissions;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Doctrine\Common\Annotations\AnnotationRegistry;
@@ -28,12 +31,22 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
                 \PermissionsHandler\Commands\ClearAnnotationsCache::class,
             ]);
         }
-
+        
+        // Gate integration
         Gate::before(function (Authenticatable $user, string $ability) {
             if (method_exists($user, 'hasPermission')) {
                 return $user->hasPermission($ability);
             }
             return true;
+        });
+
+        // Register blade directives
+        Blade::if('permission', function ($permissions, $requireAll = false) {
+            return with(new Permissions($permissions, $requireAll))->check();
+        });
+
+        Blade::if('role', function ($roles, $requireAll = false) {
+            return with(new Roles($roles, $requireAll))->check();
         });
     }
 
@@ -59,10 +72,6 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
 
     protected function setupConfig()
     {
-        if ($this->app instanceof LaravelApplication) {
-            require_once __DIR__.'/Blade/Directives.php';
-        }
-
         $configPath = app()->basePath().'/config/permissionsHandler.php';
         $migrationsPath = app()->basePath().'/database/migrations/'.date('Y_m_d_His').'_create_user_permissions_migrations.php';
 

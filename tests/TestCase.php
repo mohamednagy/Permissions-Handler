@@ -65,7 +65,7 @@ abstract class TestCase extends Orchestra
             'redirectUrl' => null,
             'aggressiveMode' => false,
             'excludedRoutes' => ['login', 'register' , 'home/*'],
-            'cacheExpiration' => 60,
+            'cacheExpiration' => 10,
             'seeder' => true,
         ];
         $app['config']->set('permissionsHandler', $configs);
@@ -97,6 +97,7 @@ abstract class TestCase extends Orchestra
         $app['config']->set('auth.guards', $guards);
 
         $app['config']->set('app.debug', true);
+        $app['config']->set('view.paths', [__DIR__.'/resources/views']);
         $app['log']->getMonolog()->pushHandler(new TestHandler());
     }
     /**

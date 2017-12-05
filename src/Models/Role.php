@@ -44,8 +44,8 @@ class Role extends Model
         return $this->belongsToMany(
             \PermissionsHandler\Models\Permission::class,
             config('permissionsHandler.tables.permission_role'),
-            $permissionsForeignKeyName,
-            $rolesForeignKeyName
+            $rolesForeignKeyName,
+            $permissionsForeignKeyName
         );
     }
 

@@ -24,24 +24,24 @@ use PermissionsHandler\Permissions;
 .
 
 /**
-* @Permissions({"add-posts"})
-*/
-function store(Request $request){
+ * @Permissions({"add-posts"})
+ */
+function store(Request $request) {
     // your code here
 }
 
 /**
-* @Roles({"admin"})
-*/
-function delete(Request $request){
+ * @Roles({"admin"})
+ */
+function delete(Request $request) {
     // your code here
 }
 
  
 /**
-* @Owns(relation="posts", attribute="id")
-*/
-function update(Request $request){
+ * @Owns(relation="posts", attribute="id")
+ */
+function update(Request $request) {
     // your code here
 }
 

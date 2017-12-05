@@ -28,6 +28,12 @@ class Permissions extends AbstractCheck
             return false;
         }
 
+        if (count($this->permissions) == 2 && isset($this->permissions['value'])) {
+            $this->requireAll = is_bool($this->permissions['requireAll']) ? $this->permissions['requireAll'] : $this->requireAll;
+        }
+
+        $this->permissions = isset($this->permissions['value']) ? $this->permissions['value'] :  $this->permissions;
+
         return $user->hasPermission($this->permissions, $this->requireAll);
     }
 }

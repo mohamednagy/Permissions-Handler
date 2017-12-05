@@ -28,6 +28,12 @@ class Roles extends AbstractCheck
             return false;
         }
 
+        if (count($this->roles) == 2 && isset($this->roles['value'])) {
+            $this->requireAll = is_bool($this->roles['requireAll']) ? $this->roles['requireAll'] : $this->requireAll;
+        }
+
+        $this->roles = isset($this->roles['value']) ? $this->roles['value'] : $this->roles;
+
         return $user->hasRole($this->roles, $this->requireAll);
     }
 }

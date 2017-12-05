@@ -6,24 +6,24 @@ Permissions Handler comes with three middlewares `MethodMiddleware`, `Permission
 This middleware will check for annotations written for your methods and check the permisions and roles assigned to this method, register this middleware into your `kernel.php` under `$middleware` to use it globaly over your system or `middlewareGroups` to use over groups or register it anywhere else according to you needs.
 ```
 /**
-* @Permissions({"add-posts"})
-*/
-function store(Request $request){
+ * @Permissions({"add-posts"})
+ */
+function store(Request $request) {
     // your code here
 }
 
 /**
-* @Roles({"admin"})
-*/
-function delete(Request $request){
+ * @Roles({"admin"})
+ */
+function delete(Request $request) {
     // your code here
 }
 
  
 /**
-* @Owns(relation="posts", attribute="id")
-*/
-function update(Request $request){
+ * @Owns(relation="posts", attribute="id")
+ */
+function update(Request $request) {
     // your code here
 }
 

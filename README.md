@@ -39,7 +39,7 @@ function delete(Request $request) {
 
  
 /**
- * @Owns(relation="posts", attribute="id")
+ * @Owns(relation="posts", parameter="id")
  */
 function update(Request $request) {
     // your code here
@@ -50,7 +50,7 @@ function update(Request $request) {
 As the above example, Permissions Handler comes with three types of annotations.
  * `Permissions({"perm1"})`: <br> only users that have *perm1* permission can access this method
  * `Roles({"role1"})`: <br> only users that have *role1* role can access this method
- * `Owns(relation="posts", attribute="id")`: <br> for example, if you are the owner of the post then only you whose can edit this post. `Owns` will ensure that, just pass the relation and the attribute which *PermissionsHandler* will get the value from the *Request* accordingly.
+ * `Owns(relation="posts", parameter="id")`: <br> for example, if you are the owner of the post then only you whose can edit this post. `Owns` will ensure that, just pass the relation and the parameter which *PermissionsHandler* will get the value from the *Request* accordingly.
 
  Check the [usage](https://github.com/mohamednagy/Permissions-Handler/wiki/usage) section for more features and details
 

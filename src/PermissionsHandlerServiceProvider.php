@@ -28,7 +28,7 @@ class PermissionsHandlerServiceProvider extends ServiceProvider
                 \PermissionsHandler\Commands\AddCommand::class,
                 \PermissionsHandler\Commands\AssignCommand::class,
                 \PermissionsHandler\Commands\SeederCommand::class,
-                \PermissionsHandler\Commands\ClearAnnotationsCache::class,
+                \PermissionsHandler\Commands\ClearCache::class,
             ]);
         }
         

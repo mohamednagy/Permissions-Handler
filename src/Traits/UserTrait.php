@@ -7,9 +7,19 @@ use PermissionsHandler\Models\Role;
 use Illuminate\Support\Facades\Cache;
 use Doctrine\Common\Inflector\Inflector;
 use PermissionsHandler\Models\Permission;
+use Illuminate\Database\Eloquent\Builder;
 
 trait UserTrait
 {
+
+    public static function bootUserTrait()
+    {
+        Builder::macro('withRole', function($role) {
+            return Builder::whereHas('roles', function($q) use ($role) {
+                return $q->where('name', $role);
+            });
+        });
+    }
     /**
      * many to many relation with PermissionsHandler\Models\Role.
      */
@@ -258,5 +268,12 @@ trait UserTrait
         $result = $this->{$relation}->contains($key, $request->{$parameter});
 
         return $result;
+    }
+
+    public function scopeWithRole($query, $role)
+    {
+        return $query->whereHas('roles', function($q) use ($role) {
+            return $q->where('name', $role);
+        });
     }
 }

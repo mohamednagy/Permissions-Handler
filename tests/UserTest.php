@@ -6,6 +6,7 @@ use PermissionsHandler;
 use PermissionsHandler\Models\Role;
 use PermissionsHandler\Seeder\Seeder;
 use PermissionsHandler\Models\Permission;
+use PermissionsHandler\Tests\Models\User;
 
 class UserTest extends TestCase
 {
@@ -256,6 +257,31 @@ class UserTest extends TestCase
     {
         $this->userModel->revokeAllRoles();
         $this->assertCount(0, $this->userModel->roles);
+    }
+
+    /** @test */
+    public function it_returns_all_users_with_admin_role()
+    {
+        $role1 = Role::create(['name' => 'role1']);
+        $role2 = Role::create(['name' => 'role2']);
+
+        $this->userModel->assignRole($role1);
+        
+        $this->assertCount(1, $this->userModel->withRole('role1')->get());
+        $this->assertCount(0, $this->userModel->withRole('role2')->get());
+    }
+
+    /** @test */
+    public function it_returns_all_users_with_admin_role_within_query_builder()
+    {
+        $role1 = Role::create(['name' => 'role1']);
+        $role2 = Role::create(['name' => 'role2']);
+
+        $this->userModel->assignRole($role1);
+
+        $users = User::where('id', 1)->withRole('role1')->get();
+        
+        $this->assertCount(1, $users);
     }
 
 }

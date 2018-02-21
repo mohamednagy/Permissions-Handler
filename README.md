@@ -73,4 +73,4 @@ As the above example, Permissions Handler comes with three types of annotations.
 
 [MIT License](http://opensource.org/licenses/MIT)
 
-**Thanks to [https://github.com/aserour](Ahmed Sorour) <3**
+**Thanks to [Ahmed Sorour](https://github.com/aserour) <3**
